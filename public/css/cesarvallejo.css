@@ -1,0 +1,260 @@
+:root {
+    --cv-primary: #5c152b;
+    --cv-primary-rgb: 1, 72, 164;
+    --cv-light-bg: #f8f9ff;
+}
+
+body.cv-app {
+    font-family: 'Roboto', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+}
+
+.cv-primary { color: var(--cv-primary) !important; }
+.bg-cv-primary { background-color: var(--cv-primary) !important; }
+
+/* Login */
+.cv-login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(164, 1, 88, 0.92) 0%, rgba(110, 1, 63, 0.95) 100%),
+        url('../img/login-bg.jpg') center/cover no-repeat;
+    padding: 24px;
+}
+
+.cv-login-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    max-width: 440px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.cv-login-header {
+    background: var(--cv-primary);
+    padding: 32px 24px 28px;
+    text-align: center;
+    color: #fff;
+}
+
+.cv-login-header img {
+    max-height: 72px;
+    margin-bottom: 12px;
+}
+
+.cv-login-body { padding: 32px 28px; }
+
+.cv-btn-login-submit {
+    background: var(--cv-primary) !important;
+    border: 2px solid var(--cv-primary) !important;
+    color: #fff !important;
+    border-radius: 50px !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.cv-btn-login-submit::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+    z-index: -1;
+}
+
+.cv-btn-login-submit:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+.cv-btn-login-submit:hover {
+    color: var(--cv-primary) !important;
+}
+
+.cv-form-control:focus {
+    border-color: var(--cv-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--cv-primary-rgb), 0.2);
+}
+
+/* Dashboard layout */
+.cv-dashboard-wrap {
+    display: flex;
+    min-height: 100vh;
+}
+
+.cv-sidebar {
+    width: 260px;
+    background: var(--cv-primary);
+    color: #fff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.cv-sidebar-brand {
+    padding: 24px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cv-sidebar-brand img { max-height: 56px; }
+
+.cv-sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+}
+
+.cv-sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cv-sidebar-nav a:hover,
+.cv-sidebar-nav a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.cv-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cv-topbar {
+    background: #fff;
+    padding: 16px 28px;
+    border-bottom: 1px solid #e8ecf0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cv-content { padding: 28px; flex: 1; }
+
+.cv-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.cv-page-subtitle { color: #666; font-size: 0.95rem; margin-bottom: 24px; }
+
+/* Cards */
+.cv-card {
+    background: #fff;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(1, 72, 164, 0.08);
+}
+
+.cv-inst-card {
+    background: var(--cv-light-bg);
+    border-radius: 12px;
+    padding: 24px;
+    border-top: 4px solid var(--cv-primary);
+    height: 100%;
+    transition: box-shadow 0.3s;
+}
+
+.cv-inst-card:hover {
+    box-shadow: 0 8px 30px rgba(1, 72, 164, 0.12);
+}
+
+.cv-inst-card i {
+    font-size: 2rem;
+    color: var(--cv-primary);
+    margin-bottom: 12px;
+}
+
+.cv-badge-primary {
+    background: var(--cv-primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Tutoría destacada */
+.cv-tutoria-banner {
+    background: linear-gradient(135deg, var(--cv-primary), #023d7a);
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.cv-tutoria-banner .btn-light {
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 10px 24px;
+}
+
+/* Tablas admin */
+.cv-table thead {
+    background: var(--cv-light-bg);
+    color: var(--cv-primary);
+}
+
+.cv-table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid var(--cv-primary);
+}
+
+/* Importar Excel */
+.cv-upload-zone {
+    border: 2px dashed rgba(1, 72, 164, 0.35);
+    border-radius: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    background: var(--cv-light-bg);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.cv-upload-zone:hover {
+    border-color: var(--cv-primary);
+    background: #fff;
+}
+
+.cv-upload-zone i {
+    font-size: 3rem;
+    color: var(--cv-primary);
+    margin-bottom: 16px;
+}
+
+@media (max-width: 991px) {
+    .cv-dashboard-wrap { flex-direction: column; }
+    .cv-sidebar { width: 100%; }
+}
