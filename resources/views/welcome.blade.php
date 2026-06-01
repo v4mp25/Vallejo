@@ -38,9 +38,9 @@
         .btn-login { background: var(--cv-primary) !important; border: 2px solid var(--cv-primary) !important; color: #fff !important; border-radius: 50px !important; padding: 10px 26px !important; font-weight: 600 !important; cursor: pointer !important; pointer-events: auto !important; transition: transform .2s, box-shadow .2s; }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(1,72,164,.35); color: #fff !important; }
         .cv-hero { position: relative; min-height: 88vh; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; overflow: hidden; }
-        .cv-hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #a4016b 0%, #5c0142 50%, #0148A4 100%); }
-        .cv-hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .45; }
-        .cv-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(90, 1, 40, 0.4), rgba(1,72,164,.75)); }
+        .cv-hero-bg { position: absolute; inset: 0; background: #000; }
+        .cv-hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
+        .cv-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.28), rgba(0,0,0,.38)); }
         .cv-hero-content { position: relative; z-index: 2; max-width: 820px; padding: 120px 24px 80px; }
         .cv-hero-content h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,.2); }
         .cv-hero-content p { font-size: 1.15rem; opacity: .95; }
@@ -57,6 +57,21 @@
         .inst-card { background: var(--cv-light-bg); border-radius: 12px; padding: 32px 24px; text-align: center; border-top: 4px solid var(--cv-primary); transition: transform .25s, box-shadow .25s; }
         .inst-card:hover { transform: translateY(-4px); box-shadow: var(--cv-shadow); }
         .inst-card i { font-size: 2.2rem; color: var(--cv-primary); margin-bottom: 14px; }
+        .admin-section { padding: 60px 24px 80px; background: #fff; }
+        .admin-wrap { max-width: 980px; margin: 0 auto; text-align: center; }
+        .admin-title { font-size: 2rem; font-weight: 700; margin-bottom: 8px; color: #1f2937; }
+        .admin-subtitle { color: #6b7280; margin-bottom: 30px; }
+        .pyramid-top { display: flex; justify-content: center; margin-bottom: 24px; }
+        .pyramid-bottom { display: grid; grid-template-columns: repeat(2, minmax(240px, 320px)); justify-content: center; gap: 20px; }
+        .admin-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 18px; box-shadow: var(--cv-shadow); }
+        .admin-photo { width: 100%; max-width: 330px; height: 420px; object-fit: cover; border-radius: 12px; background: #f3f4f6; }
+        .admin-photo.placeholder { display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 3rem; }
+        .admin-name { font-weight: 700; font-size: 1.1rem; color: #111827; margin-top: 14px; margin-bottom: 4px; }
+        .admin-role { color: var(--cv-primary); font-weight: 600; margin: 0; }
+        @media (max-width: 768px) {
+            .pyramid-bottom { grid-template-columns: 1fr; }
+            .admin-photo { max-width: 100%; height: auto; aspect-ratio: 3 / 4; }
+        }
         .copyright-cesarvallejo { background: var(--cv-primary); color: rgba(255,255,255,.9); text-align: center; padding: 22px; font-size: .9rem; }
 
         /* ===== MODAL AUTH ===== */
@@ -162,9 +177,8 @@
             </button>
         </div>
         <div class="cv-hero-dots" id="hero-dots">
-            <span data-slide="0"></span>
-            <span data-slide="1" class="active"></span>
-            <span data-slide="2"></span>
+            <span data-slide="0" class="active"></span>
+            <span data-slide="1"></span>
         </div>
     </section>
 
@@ -188,6 +202,46 @@
             <div class="inst-card"><i class="fas fa-clock"></i><h4 class="fw-bold">Horario</h4><p class="text-muted mb-0">Lun–Vie 7:30 am – 3:00 pm</p></div>
             <div class="inst-card"><i class="fas fa-users"></i><h4 class="fw-bold">Visión</h4><p class="text-muted mb-0">Ser una institución educativa de calidad académica, organizacional y de gestión que contribuya al desarrollo integral de estudiantes capaces de contribuir al progreso de la sociedad y del medio ambiente</p></div>
             <div class="inst-card"><i class="fas fa-bullseye"></i><h4 class="fw-bold">Misión</h4><p class="text-muted mb-0">Somos I.E. lider, que brinda una educacion integral de calidad los estudiantes, en una infraestructura adecuada desarrolando capacidades y valores con docentes innovadores, estrategias pertinentes, utlizando las tecnologias del momento que permitan asimilar aprendizajes esperados, utiles para la vida.</p></div>
+        </div>
+    </section>
+
+    <section class="admin-section" id="seccion-plana-administrativa">
+        <div class="admin-wrap">
+            <h2 class="admin-title">Plana administrativa</h2>
+            <p class="admin-subtitle">Equipo directivo de nuestra institución educativa.</p>
+
+            <div class="pyramid-top">
+                <article class="admin-card">
+                    <img
+                        class="admin-photo"
+                        src="/media/administracion/director"
+                        alt="Director Roger Manuel Rufino Melendez"
+                    >
+                    <h5 class="admin-name">Roger Manuel Rufino Melendez</h5>
+                    <p class="admin-role">Director</p>
+                </article>
+            </div>
+
+            <div class="pyramid-bottom">
+                <article class="admin-card">
+                    <img
+                        class="admin-photo"
+                        src="/media/administracion/subdirector"
+                        alt="Subdirector Vidal Ticona"
+                    >
+                    <h5 class="admin-name">Vidal Ticona</h5>
+                    <p class="admin-role">Subdirector</p>
+                </article>
+                <article class="admin-card">
+                    <img
+                        class="admin-photo"
+                        src="/media/administracion/subdirectora"
+                        alt="Subdirectora Diana Andrea Durand Aquino"
+                    >
+                    <h5 class="admin-name">Diana Andrea Durand Aquino</h5>
+                    <p class="admin-role">Subdirectora</p>
+                </article>
+            </div>
         </div>
     </section>
 
@@ -424,11 +478,10 @@ window.addEventListener('scroll', () => {
     navbarWrap?.classList.toggle('scrolled', window.scrollY > 60);
 });
 const heroSlides = [
-    { img: '{{ asset("assets/carousel-2.jpg") }}', title: 'Excelencia académica', sub: 'Materiales y recursos para toda la comunidad' },
-    { img: '{{ asset("assets/carousel-3.jpg") }}', title: 'Formando el futuro con excelencia', sub: 'I.E. César Vallejo — Huánuco' },
-    { img: '{{ asset("assets/carousel-1.jpg") }}', title: 'Valores y compromiso', sub: 'Educación inicial, primaria y secundaria' },
+    { img: '/media/hero/1', title: 'I.E. César Vallejo', sub: 'Educación con valores para nuestra comunidad.' },
+    { img: '/media/hero/2', title: 'Nuestro equipo docente', sub: 'Comprometidos con la formación de nuestros estudiantes.' },
 ];
-let heroIdx = 1;
+let heroIdx = 0;
 function setHeroSlide(i) {
     heroIdx = i;
     const s = heroSlides[i];
@@ -519,6 +572,10 @@ document.getElementById('form-login').addEventListener('submit', async e => {
         }).then(r => r.json());
 
         if (data.success) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+                return;
+            }
             entrarSistema(data.user);
         } else {
             errDiv.textContent = data.message || 'Código o contraseña incorrectos.';
@@ -760,11 +817,91 @@ function getProfItems() {
     const items = [
         { id: 'resumen', label: 'Inicio',     icon: 'fa-home' },
         { id: 'cursos',  label: 'Mis cursos', icon: 'fa-book-open' },
+        { id: 'psicologia', label: 'Enviar a psicología', icon: 'fa-brain' },
     ];
     if (usuarioActual?.esTutor) {
         items.push({ id: 'notas-tutorados', label: 'Notas de tutorados', icon: 'fa-chart-line' });
     }
     return items;
+}
+function renderProfPsicologia() {
+    const c = document.getElementById('prof-contenido');
+    document.getElementById('prof-titulo').textContent = 'Enviar a psicología';
+    c.innerHTML = `<div class="cv-card card-body p-4"><p class="text-muted mb-0">Cargando alumnos...</p></div>`;
+
+    apiFetch('/api/profesor/psicologia/alumnos').then(data => {
+        const filas = (data.alumnos || []).map(al => `
+            <tr>
+                <td><strong>${al.apellidos}</strong>, ${al.nombres}</td>
+                <td class="text-end">
+                    <button class="btn btn-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#modal-psi-${al.id}">
+                        Enviar a psicología
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        const modales = (data.alumnos || []).map(al => `
+            <div class="modal fade" id="modal-psi-${al.id}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Derivar a ${al.apellidos}, ${al.nombres}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Motivo</label>
+                                <input type="text" class="form-control" id="motivo-psi-${al.id}" placeholder="Ej. Cambios emocionales en clase">
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Descripción</label>
+                                <textarea class="form-control" rows="4" id="desc-psi-${al.id}" placeholder="Detalle breve de lo observado por el docente"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary btn-enviar-psi" data-alumno="${al.id}">Enviar derivación</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        c.innerHTML = `
+            <div class="cv-card card-body p-4">
+                <h5 class="mb-3"><i class="fas fa-brain me-2 cv-primary"></i>Derivar estudiantes</h5>
+                <p class="text-muted">Selecciona un alumno y registra motivo + descripción para enviar la derivación al psicólogo.</p>
+                <div class="table-responsive">
+                    <table class="table cv-table align-middle">
+                        <thead><tr><th>Alumno</th><th class="text-end">Acción</th></tr></thead>
+                        <tbody>${filas || '<tr><td colspan="2" class="text-center text-muted">Sin alumnos registrados.</td></tr>'}</tbody>
+                    </table>
+                </div>
+            </div>
+            ${modales}
+        `;
+
+        c.querySelectorAll('.btn-enviar-psi').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const alumnoId = btn.dataset.alumno;
+                const motivo = document.getElementById(`motivo-psi-${alumnoId}`).value.trim();
+                const descripcion = document.getElementById(`desc-psi-${alumnoId}`).value.trim();
+                if (!motivo) {
+                    alert('Debes registrar un motivo.');
+                    return;
+                }
+                await apiFetch('/api/profesor/psicologia/derivar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ alumno_id: alumnoId, motivo, descripcion })
+                });
+                const modalEl = document.getElementById(`modal-psi-${alumnoId}`);
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+                alert('Derivación enviada a psicología.');
+            });
+        });
+    });
 }
 function renderProf(v) {
     const c = document.getElementById('prof-contenido');
@@ -798,6 +935,8 @@ function renderProf(v) {
                 bindCursoView(c, () => renderProf('cursos'));
             };
         });
+    } else if (v === 'psicologia') {
+        renderProfPsicologia();
     } else if (v === 'notas-tutorados') {
         document.getElementById('prof-titulo').textContent = 'Notas de tutorados';
         apiFetch('/api/profesor/tutorados/notas').then(data => {
@@ -860,13 +999,29 @@ function renderPadres(v) {
         });
     } else if (v === 'avisos') {
         document.getElementById('pad-titulo').textContent = 'Avisos';
-        apiFetch('/api/avisos').then(data => {
-            const cards = (data.avisos || []).map(a => `
+        apiFetch('/api/padres/avisos').then(data => {
+            const cardsAvisos = (data.avisos || []).map(a => `
                 <div class="cv-aviso-card mb-2">
                     <h6 class="fw-bold mb-1 cv-primary">${a.titulo}</h6>
                     <p class="text-muted small mb-0">${a.contenido}</p>
                 </div>`).join('') || '<p class="text-muted">Sin avisos.</p>';
-            c.innerHTML = `<div class="cv-card card-body p-4">${cards}</div>`;
+
+            const cardsRecomendaciones = (data.recomendaciones || []).map(r => `
+                <div class="cv-aviso-card mb-2" style="border-left-color:#7c3aed;">
+                    <h6 class="fw-bold mb-1" style="color:#7c3aed;">Recomendación de Psicología</h6>
+                    <p class="mb-1">${String(r.mensaje || '').replace(/\n/g, '<br>')}</p>
+                    <small class="text-muted">
+                        ${r.fecha_cita ? `<i class="fas fa-calendar-check me-1"></i>Cita: ${r.fecha_cita}` : `<i class="fas fa-clock me-1"></i>Sin cita programada`}
+                    </small>
+                </div>`).join('') || '<p class="text-muted mb-0">Sin recomendaciones psicológicas por ahora.</p>';
+
+            c.innerHTML = `<div class="cv-card card-body p-4">
+                <h5 class="mb-3">Avisos institucionales</h5>
+                ${cardsAvisos}
+                <hr class="my-4">
+                <h5 class="mb-3">Recomendaciones de psicología</h5>
+                ${cardsRecomendaciones}
+            </div>`;
         });
     } else {
         document.getElementById('pad-titulo').textContent = 'Mi cuenta';
@@ -905,7 +1060,8 @@ fetch('/api/avisos')
                 let imagenHtml = '';
                 if (aviso.imagen) {
                     // Solo si hay imagen, arma la etiqueta <img>
-                    imagenHtml = `<img src="/storage/${aviso.imagen}" class="img-fluid rounded mb-3 w-100" style="max-height: 250px; object-fit: cover;" alt="${aviso.titulo}">`;
+                    const srcImagen = aviso.imagen_url || `/storage/${aviso.imagen}`;
+                    imagenHtml = `<img src="${srcImagen}" class="img-fluid rounded mb-3 w-100" style="max-height: 250px; object-fit: cover;" alt="${aviso.titulo}">`;
                 }
 
                 return `

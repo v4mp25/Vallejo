@@ -39,6 +39,11 @@
                     <i class="fas fa-book-open"></i> Mis cursos
                 </a>
 
+                <a href="{{ route('profesor.psicologia.index') }}"
+                   class="{{ request()->routeIs('profesor.psicologia.*') ? 'active' : '' }}">
+                    <i class="fas fa-brain"></i> Psicología
+                </a>
+
                 @if ($esTutor ?? false)
                     <div class="cv-sidebar-group-title px-3 py-2 mt-2 text-uppercase small opacity-75"
                          style="font-size:.7rem; letter-spacing:1px;">

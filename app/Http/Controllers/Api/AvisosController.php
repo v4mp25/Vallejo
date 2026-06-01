@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Aviso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AvisosController extends Controller
 {
@@ -19,7 +20,8 @@ class AvisosController extends Controller
                 'id'          => $a->id,
                 'titulo'      => $a->titulo,
                 'contenido'   => $a->contenido,
-                'imagen'      => $a->imagen_path, // <-- AQUÍ AGREGAMOS LA IMAGEN
+                'imagen'      => $a->imagen_path,
+                'imagen_url'  => $a->imagen_path ? Storage::disk('public')->url($a->imagen_path) : null,
                 'publicado_at'=> $a->publicado_at
                     ? \Carbon\Carbon::parse($a->publicado_at)->format('d/m/Y h:i A')
                     : \Carbon\Carbon::parse($a->created_at)->format('d/m/Y h:i A'),
@@ -34,6 +36,7 @@ class AvisosController extends Controller
         $request->validate([
             'titulo'    => 'required|string|max:255',
             'contenido' => 'required|string',
+            'imagen'    => 'nullable|image|max:5120',
         ]);
 
         $imagenPath = null;
@@ -49,6 +52,10 @@ class AvisosController extends Controller
             'creado_por'   => Auth::id(),
         ]);
 
-        return response()->json(['success' => true, 'aviso' => $aviso]);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'aviso' => $aviso]);
+        }
+
+        return redirect()->back()->with('success', '¡Aviso publicado con éxito!');
     }
 }

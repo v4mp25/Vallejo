@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Asignacion;
+use App\Models\Aviso;
+use App\Models\CitaPsicologica;
 use App\Models\Nota;
 use App\Models\Padre;
 use App\Models\User;
@@ -46,6 +48,53 @@ class PadresController extends Controller
         return response()->json([
             'estudiante' => trim($alumno->apellidos) . ', ' . trim($alumno->nombres),
             'notas'      => array_values($porCurso),
+        ]);
+    }
+
+    /** GET /api/padres/avisos — avisos institucionales + recomendaciones psicológicas */
+    public function avisos()
+    {
+        $user = Auth::user();
+
+        $alumno = null;
+        if ($user->rol === 'alumno') {
+            $alumno = $user;
+        } elseif ($user->rol === 'padre') {
+            $padre = Padre::where('user_id', $user->id)->first();
+            if ($padre) {
+                $alumno = User::find($padre->estudiante_id);
+            }
+        }
+
+        $avisos = Aviso::orderByDesc('created_at')
+            ->get()
+            ->map(fn($a) => [
+                'titulo' => $a->titulo,
+                'contenido' => $a->contenido,
+                'publicado_at' => \Carbon\Carbon::parse($a->publicado_at ?? $a->created_at)->format('d/m/Y h:i A'),
+            ])
+            ->values();
+
+        $recomendaciones = collect();
+        if ($alumno) {
+            $recomendaciones = CitaPsicologica::query()
+                ->where('alumno_id', $alumno->id)
+                ->whereNotNull('psicologo_id')
+                ->whereIn('estado', ['pendiente', 'atendida'])
+                ->latest()
+                ->get(['motivo', 'fecha_cita', 'estado', 'created_at'])
+                ->map(fn($c) => [
+                    'mensaje' => $c->motivo,
+                    'estado' => $c->estado,
+                    'fecha_cita' => $c->fecha_cita ? \Carbon\Carbon::parse($c->fecha_cita)->format('d/m/Y h:i A') : null,
+                    'registrado_at' => $c->created_at?->format('d/m/Y h:i A'),
+                ])
+                ->values();
+        }
+
+        return response()->json([
+            'avisos' => $avisos,
+            'recomendaciones' => $recomendaciones,
         ]);
     }
 

@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Asignacion;
 use App\Models\Asistencia;
 use App\Models\Aula;
+use App\Models\CitaPsicologica;
 use App\Models\Nota;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
@@ -247,6 +249,60 @@ class DashboardController extends Controller
                 'curso' => $a->curso->nombre ?? '—',
             ]),
             'notas' => $notas,
+        ]);
+    }
+
+    /* ──────────────────────────────────────────────
+     *  8. API — alumnos para derivación a psicología
+     * ────────────────────────────────────────────── */
+    public function apiAlumnosPsicologia()
+    {
+        $alumnos = User::query()
+            ->where('rol', 'alumno')
+            ->orderBy('apellidos')
+            ->orderBy('nombres')
+            ->get(['id', 'nombres', 'apellidos']);
+
+        return response()->json([
+            'alumnos' => $alumnos->map(fn($a) => [
+                'id' => $a->id,
+                'nombres' => trim($a->nombres),
+                'apellidos' => trim($a->apellidos),
+            ]),
+        ]);
+    }
+
+    /* ──────────────────────────────────────────────
+     *  9. API — derivar alumno a psicología
+     * ────────────────────────────────────────────── */
+    public function apiDerivarPsicologia(Request $request)
+    {
+        $datos = $request->validate([
+            'alumno_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(fn($q) => $q->where('rol', 'alumno')),
+            ],
+            'motivo' => ['required', 'string', 'min:5', 'max:400'],
+            'descripcion' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $motivoCompleto = "Motivo: {$datos['motivo']}";
+        if (!empty($datos['descripcion'])) {
+            $motivoCompleto .= "\n\nDescripción:\n" . trim($datos['descripcion']);
+        }
+
+        CitaPsicologica::create([
+            'alumno_id' => $datos['alumno_id'],
+            'profesor_id' => Auth::id(),
+            'psicologo_id' => null,
+            'motivo' => $motivoCompleto,
+            'fecha_cita' => null,
+            'estado' => 'pendiente',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Derivación enviada a psicología.',
         ]);
     }
 }

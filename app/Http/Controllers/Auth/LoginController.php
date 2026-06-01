@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Login — devuelve JSON para que el frontend JS lo consuma.
-     */
+   
     public function login(Request $request)
     {
         $request->validate([
@@ -34,6 +32,23 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
         $user = Auth::user();
+
+        if ($user->rol === 'psicologo') {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success'  => true,
+                    'redirect' => route('psicologo.dashboard'),
+                    'user'     => [
+                        'id'        => $user->id,
+                        'nombres'   => trim($user->nombres),
+                        'apellidos' => trim($user->apellidos),
+                        'rol'       => $user->rol,
+                    ],
+                ]);
+            }
+
+            return redirect()->route('psicologo.dashboard');
+        }
 
         // Datos extra según el rol
         $extra = [];
