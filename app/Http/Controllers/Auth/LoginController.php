@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
    
-    public function login(Request $request)
+   public function login(Request $request)
     {
         $request->validate([
             'codigo_usuario' => 'required',
@@ -23,6 +23,7 @@ class LoginController extends Controller
             'password'       => $request->password,
         ];
 
+        // 1. Verificamos si la contraseña es correcta
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'success' => false,
@@ -30,57 +31,34 @@ class LoginController extends Controller
             ], 401);
         }
 
+        // 2. Iniciamos la sesión de forma segura
         $request->session()->regenerate();
         $user = Auth::user();
 
-        if ($user->rol === 'psicologo') {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success'  => true,
-                    'redirect' => route('psicologo.dashboard'),
-                    'user'     => [
-                        'id'        => $user->id,
-                        'nombres'   => trim($user->nombres),
-                        'apellidos' => trim($user->apellidos),
-                        'rol'       => $user->rol,
-                    ],
-                ]);
-            }
-
-            return redirect()->route('psicologo.dashboard');
+        // 3. Decidimos a qué pantalla enviarlo según su rol
+        $redirectUrl = '/'; 
+        
+        switch ($user->rol) {
+            case 'admin':
+                $redirectUrl = '/admin/dashboard'; // Asegúrate de tener esta ruta
+                break;
+            case 'profesor':
+            case 'director':
+                $redirectUrl = '/profesor/dashboard'; // Redirige a la vista blade que editamos
+                break;
+            case 'psicologo':
+                $redirectUrl = '/psicologo/dashboard';
+                break;
+            case 'padre':
+            case 'alumno':
+                $redirectUrl = '/padres/dashboard'; // Cambia esto por la ruta real de tus alumnos
+                break;
         }
 
-        // Datos extra según el rol
-        $extra = [];
-
-        if ($user->rol === 'profesor' || $user->rol === 'director') {
-            $aulaTutoria = Aula::where('tutor_id', $user->id)->first();
-            $extra['esTutor'] = $aulaTutoria !== null;
-            $extra['salonTutoria'] = $aulaTutoria
-                ? ['nombre' => $aulaTutoria->grado . '° ' . $aulaTutoria->seccion]
-                : null;
-
-            // Cargar cursos del profesor para el sidebar
-            if ($user->rol === 'profesor') {
-                $extra['cursos'] = Asignacion::with(['curso', 'aula'])
-                    ->where('profesor_id', $user->id)
-                    ->get()
-                    ->map(fn($a) => [
-                        'id'     => $a->id,
-                        'nombre' => $a->curso->nombre ?? 'Curso',
-                        'aula'   => ($a->aula->grado ?? '') . '° ' . ($a->aula->seccion ?? ''),
-                    ]);
-            }
-        }
-
+        // 4. Le devolvemos la ruta al JavaScript del welcome.blade.php
         return response()->json([
-            'success' => true,
-            'user'    => array_merge([
-                'id'       => $user->id,
-                'nombres'  => trim($user->nombres),
-                'apellidos'=> trim($user->apellidos),
-                'rol'      => $user->rol,
-            ], $extra),
+            'success'  => true,
+            'redirect' => $redirectUrl,
         ]);
     }
 
