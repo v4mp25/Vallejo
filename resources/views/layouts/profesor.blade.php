@@ -14,7 +14,7 @@
     @stack('styles')
 </head>
 <body class="cv-app">
-    <h1>¡¡¡HOLA, SÍ ESTOY EDITANDO EL ARCHIVO CORRECTO!!!</h1>
+   
     <div class="cv-dashboard-wrap">
         {{-- ===== SIDEBAR ===== --}}
         <aside class="cv-sidebar">
@@ -34,10 +34,10 @@
                    class="{{ request()->routeIs('profesor.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Inicio
                 </a>
-<a href="{{ route('profesor.aula-virtual.index') }}"
-   class="{{ request()->routeIs('profesor.aula-virtual.*') ? 'active' : '' }}">
-    <i class="fas fa-laptop-house"></i> Aula Virtual
-</a>
+                <a href="{{ route('profesor.aula-virtual.index') }}"
+                   class="{{ request()->routeIs('profesor.aula-virtual.*') || request()->routeIs('aula-virtual.*') ? 'active' : '' }}">
+                    <i class="fas fa-laptop-house"></i> Aula Virtual
+                </a>
                 <a href="{{ route('profesor.dashboard') }}#cursos"
                    class="{{ request()->routeIs('profesor.clase') ? 'active' : '' }}">
                     <i class="fas fa-book-open"></i> Mis cursos

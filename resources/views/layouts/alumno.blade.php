@@ -18,10 +18,15 @@
                 <h1 class="cv-page-title mb-0">Portal del Alumno</h1>
                 <p class="text-muted small mb-0">I.E. César Vallejo</p>
             </div>
-            <button type="button" class="btn btn-outline-danger btn-sm"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt me-1"></i> Salir
-            </button>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('aula-virtual.index') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-laptop-house me-1"></i> Aula Virtual
+                </a>
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt me-1"></i> Salir
+                </button>
+            </div>
         </div>
         <main class="cv-content">
             @yield('content')
