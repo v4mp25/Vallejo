@@ -9,6 +9,7 @@ use App\Http\Controllers\Profesor\DerivacionPsicologicaController;
 use App\Http\Controllers\Psicologo\PsicologoController;
 use App\Http\Controllers\Api\AvisosController;
 use App\Http\Controllers\Api\PadresController;
+use App\Http\Controllers\AulaVirtualController;
 use App\Imports\AlumnosImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ConfiguracionWeb;
@@ -175,12 +176,27 @@ Route::middleware(['auth', 'role:profesor,director'])->group(function () {
     Route::post('/profesor/clase/{id}/notas', [ProfesorDashboard::class, 'guardarNotas'])->name('profesor.notas.guardar');
     Route::get('/profesor/tutorados/notas', [ProfesorDashboard::class, 'notasTutorados'])->name('profesor.tutorados.notas');
 
-    Route::get('/profesor/aula-virtual', [App\Http\Controllers\Profesor\AulaVirtualController::class, 'index'])->name('profesor.aula-virtual.index');
-    Route::post('/profesor/aula-virtual/material', [App\Http\Controllers\Profesor\AulaVirtualController::class, 'storeMaterial'])->name('profesor.aula-virtual.material.store');
-    Route::post('/profesor/aula-virtual/tarea', [App\Http\Controllers\Profesor\AulaVirtualController::class, 'storeTarea'])->name('profesor.aula-virtual.tarea.store');
+    Route::get('/profesor/aula-virtual', [AulaVirtualController::class, 'index'])->name('profesor.aula-virtual.index');
+    Route::post('/profesor/aula-virtual/material', [AulaVirtualController::class, 'storeMaterial'])->name('aula-virtual.material.store');
+    Route::post('/profesor/aula-virtual/tarea', [AulaVirtualController::class, 'storeTask'])->name('aula-virtual.tarea.store');
+    Route::get('/profesor/aula-virtual/{material}', [AulaVirtualController::class, 'show'])->name('aula-virtual.show');
 
     Route::get('/profesor/psicologia', [DerivacionPsicologicaController::class, 'index'])->name('profesor.psicologia.index');
     Route::post('/profesor/psicologia/derivaciones', [DerivacionPsicologicaController::class, 'store'])->name('profesor.psicologia.store');
+});
+
+Route::middleware(['auth', 'role:alumno,padre'])->group(function () {
+    Route::get('/padres/dashboard', function () {
+        return view('padres.dashboard');
+    })->name('padres.dashboard');
+
+    Route::get('/alumno/dashboard', function () {
+        return view('alumno.dashboard');
+    })->name('alumno.dashboard');
+
+    Route::get('/aula-virtual', [AulaVirtualController::class, 'index'])->name('aula-virtual.index');
+    Route::post('/aula-virtual/tarea', [AulaVirtualController::class, 'storeTask'])->name('aula-virtual.tarea.store');
+    Route::get('/aula-virtual/{material}', [AulaVirtualController::class, 'show'])->name('aula-virtual.show');
 });
 
 /*

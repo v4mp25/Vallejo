@@ -104,13 +104,35 @@ class PadresController extends Controller
         $user  = Auth::user();
         $padre = Padre::where('user_id', $user->id)->first();
 
+        $request->validate([
+            'codigo_usuario' => 'nullable|string|unique:users,codigo_usuario,' . $user->id,
+            'password' => 'nullable|min:6',
+            'recibir_avisos_email' => 'nullable|boolean',
+        ]);
+
+        $userData = [];
+        if ($request->filled('codigo_usuario')) {
+            $userData['codigo_usuario'] = $request->codigo_usuario;
+        }
+        if ($request->filled('password')) {
+            $userData['password'] = $request->password;
+        }
+
+        if (!empty($userData)) {
+            $user->update($userData);
+        }
+
         if ($padre) {
             $padre->update([
                 'recibir_avisos_email' => $request->boolean('recibir_avisos_email'),
             ]);
         }
 
-        return response()->json(['success' => true]);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Tu cuenta se actualizó correctamente.');
     }
 
     /** POST /padres/registro — registro de nuevo padre */

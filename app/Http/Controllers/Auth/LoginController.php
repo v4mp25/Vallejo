@@ -40,18 +40,20 @@ class LoginController extends Controller
         
         switch ($user->rol) {
             case 'admin':
-                $redirectUrl = '/admin/dashboard'; // Asegúrate de tener esta ruta
+                $redirectUrl = '/admin/dashboard';
                 break;
             case 'profesor':
             case 'director':
-                $redirectUrl = '/profesor/dashboard'; // Redirige a la vista blade que editamos
+                $redirectUrl = '/profesor/dashboard';
                 break;
             case 'psicologo':
                 $redirectUrl = '/psicologo/dashboard';
                 break;
             case 'padre':
+                $redirectUrl = '/padres/dashboard';
+                break;
             case 'alumno':
-                $redirectUrl = '/padres/dashboard'; // Cambia esto por la ruta real de tus alumnos
+                $redirectUrl = '/alumno/dashboard';
                 break;
         }
 
@@ -71,6 +73,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json(['success' => true]);
+        return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
     }
 }
