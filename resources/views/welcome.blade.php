@@ -48,7 +48,100 @@
       .cv-hero-content p { font-size: 1.1rem; opacity: 0.95; text-shadow: 0 2px 8px rgba(0,0,0,0.5); margin-left: 0; } 
         .cv-aviso-card { background: #fff; border: 1px solid #e8ecf0; border-left: 4px solid var(--cv-primary); border-radius: 12px; padding: 20px 24px; text-align: left; box-shadow: var(--cv-shadow); margin-bottom: 12px; }
         .admin-section { padding: 60px 24px 80px; background: #fff; }
-        .copyright-cesarvallejo { background: var(--cv-primary); color: rgba(255,255,255,.9); text-align: center; padding: 22px; font-size: .9rem; }
+        .copyright-cesarvallejo { background: #011e3c; color: rgba(255,255,255,.75); text-align: center; padding: 15px; font-size: .85rem; }
+
+        /* Custom Footer Redesign */
+        .cv-footer-custom {
+            background-color: var(--cv-primary-dark);
+            border-top: 4px solid #ffc107;
+            padding: 20px 0;
+            color: #ffffff;
+            font-size: 0.9rem;
+            position: relative;
+        }
+        .cv-footer-social-span {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+        .cv-social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            color: #ffffff;
+            text-decoration: none !important;
+            font-size: 0.95rem;
+            transition: transform 0.2s, filter 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .cv-social-icon:hover {
+            transform: scale(1.1);
+            filter: brightness(1.15);
+            color: #ffffff;
+        }
+        .cv-social-icon.facebook {
+            background-color: #1877f2;
+        }
+        .cv-social-icon.youtube {
+            background-color: #ff0000;
+        }
+        .cv-social-icon.instagram {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+        }
+        .cv-footer-phrase {
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+        }
+        .cv-footer-contact-item {
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .cv-footer-contact-item:hover {
+            opacity: 0.85;
+            color: #ffffff;
+        }
+        .cv-footer-contact-icon {
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        .btn-scroll-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background-color: var(--cv-primary);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .btn-scroll-top:hover {
+            background-color: var(--cv-primary-dark);
+            transform: translateY(-3px);
+            color: #ffffff;
+        }
 
         /* ===== MODAL AUTH ===== */
         .cv-overlay-auth { position: fixed; inset: 0; background: rgba(1, 30, 60, 0.65); backdrop-filter: blur(6px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -87,7 +180,7 @@
         <div class="container d-flex justify-content-end text-white">
             <span class="fw-semibold fst-italic">
                 <i class="fas fa-quote-left text-warning me-1 small"></i>
-                {{ $config->frase_topbar ?? 'Formamos líderes con corazón vallejiano' }}
+                {{ $config->frase_topbar ?? 'xddd líderes con corazón vallejiano' }}
                 <i class="fas fa-quote-right text-warning ms-1 small"></i>
             </span>
         </div>
@@ -154,7 +247,7 @@
             </h1>
             
             <p id="hero-subtitle" class="mb-4 text-white-50 max-w-xl mx-auto">
-                {{ $config->hero_subtitulo ?? 'Institución Educativa Emblemática "César Vallejo" — Brindando una educación integral basada en la autodisciplina, la cultura y los valores morales en la región Huánuco.' }}
+                {{ $config->hero_subtitulo ?? 'formamos.' }}
             </p>
             
             <button type="button" class="btn btn-warning btn-lg rounded-pill px-4 fw-bold shadow" id="btn-hero-login">
@@ -227,37 +320,64 @@
         </div>
     </div>
 
-    <section class="admin-section bg-light" id="seccion-plana-administrativa">
-        <div class="container text-center py-4" style="max-width: 980px;">
-            <h2 class="fw-bold text-dark mb-2">Plana Administrativa</h2>
-            <p class="text-muted mb-5">Equipo directivo de nuestra institución educativa.</p>
+    <section class="cv-footer-custom">
+        <div class="container-fluid px-4">
+            <div class="row align-items-center justify-content-between g-3 text-center text-lg-start">
+                
+                <!-- Left: Social Networks -->
+                <div class="col-lg-4 col-md-12 d-flex align-items-center justify-content-center justify-content-lg-start gap-2 mb-2 mb-lg-0">
+                    <span class="cv-footer-social-span">Síguenos en nuestras redes:</span>
+                    <a href="{{ $config->link_facebook ?? 'https://www.facebook.com' }}" target="_blank" class="cv-social-icon facebook" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="{{ $config->link_youtube ?? 'https://www.youtube.com' }}" target="_blank" class="cv-social-icon youtube" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="{{ $config->link_instagram ?? 'https://www.instagram.com' }}" target="_blank" class="cv-social-icon instagram" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
 
-            <div class="row justify-content-center g-4">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm p-3">
-                        <img class="card-img-top rounded" src="/media/administracion/director" alt="Director" style="height: 350px; object-fit: cover;">
-                        <div class="card-body p-2 mt-3">
-                            <h5 class="fw-bold text-dark mb-0">Roger Manuel Rufino</h5>
-                            <p class="text-primary fw-semibold mb-0">Director General</p>
-                        </div>
-                    </div>
+                <!-- Center: Phrase -->
+                <div class="col-lg-4 col-md-12 text-center mb-2 mb-lg-0">
+                    <span class="cv-footer-phrase">
+                        "{{ $config->frase_topbar ?? 'Formamos líderes con corazón vallejiano' }}"
+                    </span>
                 </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm p-3">
-                        <img class="card-img-top rounded" src="/media/administracion/subdirector" alt="Subdirector" style="height: 350px; object-fit: cover;">
-                        <div class="card-body p-2 mt-3">
-                            <h5 class="fw-bold text-dark mb-0">Vidal Ticona</h5>
-                            <p class="text-primary fw-semibold mb-0">Subdirector Académico</p>
-                        </div>
-                    </div>
+
+                <!-- Right: Contact info -->
+                <div class="col-lg-4 col-md-12 d-flex align-items-center justify-content-center justify-content-lg-end gap-3 flex-wrap">
+                    <span class="d-inline-flex align-items-center gap-2">
+                        <i class="fas fa-map-marker-alt cv-footer-contact-icon"></i>
+                        @if(isset($config) && $config->link_maps)
+                            <a href="{{ $config->link_maps }}" target="_blank" class="cv-footer-contact-item">
+                                {{ $config->direccion_texto ?? 'Amarilis, Huánuco, Perú' }}
+                            </a>
+                        @else
+                            <span class="cv-footer-contact-item">{{ $config->direccion_texto ?? 'Amarilis, Huánuco, Perú' }}</span>
+                        @endif
+                    </span>
+                    
+                    <span class="d-inline-flex align-items-center gap-2">
+                        <i class="fas fa-envelope cv-footer-contact-icon"></i>
+                        <a href="mailto:{{ $config->correo_contacto ?? 'contacto@cesarvallejo.edu.pe' }}" class="cv-footer-contact-item">
+                            {{ $config->correo_contacto ?? 'contacto@cesarvallejo.edu.pe' }}
+                        </a>
+                    </span>
                 </div>
+
             </div>
         </div>
     </section>
 
     <footer class="copyright-cesarvallejo">
-        <p class="mb-0">Copyright &copy; {{ date('Y') }} I.E. César Vallejo</p>
+        <p class="mb-0">Copyright &copy; {{ date('Y') }} I.E. César Vallejo — Todos los derechos reservados.</p>
     </footer>
+
+    <!-- Botón Volver Arriba -->
+    <button type="button" id="btn-scroll-top" class="btn-scroll-top" aria-label="Volver arriba">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     {{-- ===== MODAL LOGIN ===== --}}
     <div class="cv-overlay-auth" id="modal-auth">
@@ -482,6 +602,20 @@
             }
         })
         .catch(error => console.error('Error cargando avisos:', error));
+    /* ===== SCROLL TO TOP ===== */
+    const btnScrollTop = document.getElementById('btn-scroll-top');
+    if (btnScrollTop) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                btnScrollTop.classList.add('visible');
+            } else {
+                btnScrollTop.classList.remove('visible');
+            }
+        });
+        btnScrollTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
     </script>
 </body>
 </html>

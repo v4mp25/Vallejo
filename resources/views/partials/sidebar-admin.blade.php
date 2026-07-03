@@ -12,6 +12,10 @@
            class="{{ request()->routeIs('admin.importar-profesores*') ? 'active' : '' }}">
             <i class="fas fa-file-excel"></i> Importar Profesores
         </a>
+        <a href="{{ route('admin.institucion.index') }}"
+   class="{{ request()->routeIs('admin.institucion*') ? 'active' : '' }}">
+    <i class="fas fa-school"></i> Nuestra Institución
+</a>
     </nav>
     <div class="p-3 border-top border-light border-opacity-25">
         <button type="button" class="btn btn-outline-light btn-sm w-100"

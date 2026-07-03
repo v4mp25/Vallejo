@@ -13,6 +13,7 @@ use App\Imports\AlumnosImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ConfiguracionWeb;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\InstitucionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,10 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/login', fn() => view('welcome'))->name('login');
-Route::get('/nuestra-institucion', fn() => view('nuestra-institucion'));
+Route::get('/nuestra-institucion', function () {
+    $info = \App\Models\InstitucionInfo::first() ?? new \App\Models\InstitucionInfo();
+    return view('nuestra-institucion', compact('info'));
+});
 
 Route::get('/media/hero/{id}', function ($id) {
     $imagenes = [
@@ -112,47 +116,29 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     })->name('admin.configuracion');
 
     Route::post('/admin/configuracion/guardar', function(Request $request) {
-    $request->validate([
-        'frase_topbar' => 'required|string|max:255',
-        'banner_inicial' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
-        'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Máx 2MB para el logo
-    ]);
-
-    $config = \App\Models\ConfiguracionWeb::first() ?? new \App\Models\ConfiguracionWeb();
-    $config->frase_topbar = $request->frase_topbar;
-
-    // Procesar Fondo Banner
-    if ($request->hasFile('banner_inicial')) {
-        $rutaImagen = $request->file('banner_inicial')->store('portal', 'public');
-        $config->banner_inicial_url = $rutaImagen;
-    }
-
-    // --- NUEVA LÓGICA PARA EL LOGO ---
-    if ($request->hasFile('logo')) {
-        $rutaLogo = $request->file('logo')->store('portal', 'public');
-        $config->logo_url = $rutaLogo;
-    }
-
-    $config->save();
-
-    return back()->with('success', '¡Portal web actualizado con éxito!');
-})->name('admin.configuracion.guardar');
-// Procesar el envío del formulario
-    Route::post('/admin/configuracion/guardar', function(Request $request) {
         $request->validate([
             'frase_topbar' => 'required|string|max:255',
             'hero_titulo' => 'nullable|string|max:255',
             'hero_subtitulo' => 'nullable|string',
             'banner_inicial' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'link_facebook' => 'nullable|string|max:255',
+            'link_youtube' => 'nullable|string|max:255',
+            'link_instagram' => 'nullable|string|max:255',
+            'direccion_texto' => 'nullable|string|max:255',
+            'link_maps' => 'nullable|string',
         ]);
 
         $config = \App\Models\ConfiguracionWeb::first() ?? new \App\Models\ConfiguracionWeb();
         $config->frase_topbar = $request->frase_topbar;
-        
-        // --- ASIGNACIÓN DE LOS TEXTOS DINÁMICOS ---
         $config->hero_titulo = $request->hero_titulo;
         $config->hero_subtitulo = $request->hero_subtitulo;
+        
+        $config->link_facebook = $request->link_facebook;
+        $config->link_youtube = $request->link_youtube;
+        $config->link_instagram = $request->link_instagram;
+        $config->direccion_texto = $request->direccion_texto;
+        $config->link_maps = $request->link_maps;
 
         // Si subieron una imagen nueva para el fondo de la web
         if ($request->hasFile('banner_inicial')) {
@@ -172,6 +158,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     })->name('admin.configuracion.guardar');
 
     Route::post('/admin/avisos', [AvisosController::class, 'store'])->name('admin.avisos.store');
+
+    // Nuestra Institución
+    Route::get('/admin/institucion',         [InstitucionController::class, 'index'])->name('admin.institucion.index');
+    Route::post('/admin/institucion/guardar',[InstitucionController::class, 'guardar'])->name('admin.institucion.guardar');
 });
 
 /*

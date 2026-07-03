@@ -22,6 +22,37 @@
                     <input type="text" name="frase_topbar" class="form-control" value="{{ old('frase_topbar', $config->frase_topbar) }}" required>
                     <small class="text-muted">Esta frase se mostrará en la esquina superior derecha de la pantalla de inicio pública.</small>
                 </div>
+                <hr class="my-4">
+<h5 class="mb-3 text-primary fw-bold"><i class="fas fa-share-alt me-2"></i> Redes Sociales y Ubicación</h5>
+                <div class="mb-4">
+    <label class="form-label fw-bold text-dark">Enlace de la página de Facebook</label>
+    <input type="url" name="link_facebook" class="form-control" value="{{ old('link_facebook', $config->link_facebook) }}" placeholder="https://www.facebook.com/tu-colegio">
+    <small class="text-muted">Pega la URL completa del perfil o página oficial de Facebook de la institución.</small>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-bold text-dark">Enlace de la página de YouTube</label>
+    <input type="url" name="link_youtube" class="form-control" value="{{ old('link_youtube', $config->link_youtube) }}" placeholder="https://www.youtube.com/c/tu-colegio">
+    <small class="text-muted">Pega la URL completa del canal oficial de YouTube de la institución.</small>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-bold text-dark">Enlace de la página de Instagram</label>
+    <input type="url" name="link_instagram" class="form-control" value="{{ old('link_instagram', $config->link_instagram) }}" placeholder="https://www.instagram.com/tu-colegio">
+    <small class="text-muted">Pega la URL completa del perfil oficial de Instagram de la institución.</small>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-bold text-dark">Texto de la Dirección</label>
+    <input type="text" name="direccion_texto" class="form-control" value="{{ old('direccion_texto', $config->direccion_texto) }}" placeholder="Ej: Av. Universitaria s/n, Huánuco">
+    <small class="text-muted">La dirección física corta que se imprimirá en el pie de página.</small>
+</div>
+
+<div class="mb-4">
+    <label class="form-label fw-bold text-dark">Enlace de Google Maps (URL de redirección)</label>
+    <textarea name="link_maps" class="form-control" rows="2" placeholder="Pega el enlace compartido desde Google Maps aquí...">{{ old('link_maps', $config->link_maps) }}</textarea>
+    <small class="text-muted">Entra a Google Maps, busca el colegio, dale a "Compartir", copia el enlace y pégalo aquí.</small>
+</div>
                 <div class="mb-4">
     <label class="form-label fw-bold text-dark">Título de Bienvenida (Hero Banner)</label>
     <input type="text" name="hero_titulo" class="form-control" value="{{ old('hero_titulo', $config->hero_titulo) }}" placeholder="Ej: Formando el futuro con excelencia">
