@@ -9,6 +9,7 @@ class VirtualMaterial extends Model
 {
     protected $fillable = [
         'user_id',
+        'curso_id',
         'title',
         'description',
         'resource_type',
@@ -24,5 +25,10 @@ class VirtualMaterial extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function curso(): BelongsTo
+    {
+        return $this->belongsTo(Curso::class);
     }
 }

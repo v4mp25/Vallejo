@@ -12,30 +12,79 @@
     <link href="{{ asset('css/cesarvallejo.css') }}" rel="stylesheet">
 </head>
 <body class="cv-app">
-    <div class="cv-main" style="min-height: 100vh;">
-        <div class="cv-topbar">
-            <div>
-                <h1 class="cv-page-title mb-0">Portal del Alumno</h1>
-                <p class="text-muted small mb-0">I.E. César Vallejo</p>
+    <div class="cv-dashboard-wrap">
+        <aside class="cv-sidebar">
+            <div class="cv-sidebar-brand">
+                <img src="{{ asset('img/Yachachin1.png') }}" alt="I.E. César Vallejo"
+                     onerror="this.outerHTML='<i class=\'fas fa-graduation-cap fa-2x mb-2\' style=\'color:#fff\'></i>'">
+                <h5 class="mb-0 mt-2">Portal del Alumno</h5>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <a href="{{ route('aula-virtual.index') }}" class="btn btn-outline-primary btn-sm">
-                    <i class="fas fa-laptop-house me-1"></i> Aula Virtual
+
+            <nav class="cv-sidebar-nav">
+                <div class="cv-sidebar-group-title px-3 py-2 text-uppercase small opacity-75"
+                     style="font-size:.7rem; letter-spacing:1px;">
+                    Mi panel
+                </div>
+
+                <a href="{{ route('alumno.dashboard') }}"
+                   class="{{ request()->routeIs('alumno.dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-home"></i> Inicio
                 </a>
-                <button type="button" class="btn btn-outline-danger btn-sm"
+                <a href="{{ route('aula-virtual.index') }}"
+                   class="{{ request()->routeIs('aula-virtual.*') ? 'active' : '' }}">
+                    <i class="fas fa-laptop-house"></i> Aula Virtual
+                </a>
+            </nav>
+
+            <div class="p-3 border-top border-light border-opacity-25">
+                <div class="text-center mb-2 small opacity-75">
+                    {{ Auth::user()->nombres ?? Auth::user()->name ?? 'Alumno' }} {{ Auth::user()->apellidos ?? '' }}
+                </div>
+                <button type="button" class="btn btn-outline-light btn-sm w-100"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt me-1"></i> Salir
+                    <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
                 </button>
             </div>
+        </aside>
+
+        <div class="cv-main">
+            @include('partials.topbar')
+
+            <main class="cv-content">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </main>
         </div>
-        <main class="cv-content">
-            @yield('content')
-        </main>
     </div>
 
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
         @csrf
     </form>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

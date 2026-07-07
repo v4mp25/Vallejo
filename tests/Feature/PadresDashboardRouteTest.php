@@ -11,6 +11,6 @@ class PadresDashboardRouteTest extends TestCase
         $route = $this->app['router']->getRoutes()->getByName('padres.dashboard');
 
         $this->assertNotNull($route);
-        $this->assertSame('/padres/dashboard', $route->uri());
+        $this->assertSame('padres/dashboard', $route->uri());
     }
 }
