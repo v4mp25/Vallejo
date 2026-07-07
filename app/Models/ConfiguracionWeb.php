@@ -13,13 +13,6 @@ class ConfiguracionWeb extends Model
         'frase_topbar',
         'banner_inicial_url',
         'telefono_contacto',
-        'correo_contacto',
-        'link_facebook',
-        'link_youtube',
-        'link_instagram',
-        'link_maps',
-        'direccion_texto',
-        'hero_titulo',
-        'hero_subtitulo'
+        'correo_contacto'
     ];
 }

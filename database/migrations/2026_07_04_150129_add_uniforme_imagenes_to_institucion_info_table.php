@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('configuracion_webs', function (Blueprint $table) {
-            //
+        Schema::table('institucion_info', function (Blueprint $table) {
+            $table->json('uniforme_imagenes')->nullable()->after('uniforme_imagen');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('configuracion_webs', function (Blueprint $table) {
-            //
+        Schema::table('institucion_info', function (Blueprint $table) {
+            $table->dropColumn('uniforme_imagenes');
         });
     }
 };

@@ -31,18 +31,6 @@
 </div>
 
 <div class="mb-4">
-    <label class="form-label fw-bold text-dark">Enlace de la página de YouTube</label>
-    <input type="url" name="link_youtube" class="form-control" value="{{ old('link_youtube', $config->link_youtube) }}" placeholder="https://www.youtube.com/c/tu-colegio">
-    <small class="text-muted">Pega la URL completa del canal oficial de YouTube de la institución.</small>
-</div>
-
-<div class="mb-4">
-    <label class="form-label fw-bold text-dark">Enlace de la página de Instagram</label>
-    <input type="url" name="link_instagram" class="form-control" value="{{ old('link_instagram', $config->link_instagram) }}" placeholder="https://www.instagram.com/tu-colegio">
-    <small class="text-muted">Pega la URL completa del perfil oficial de Instagram de la institución.</small>
-</div>
-
-<div class="mb-4">
     <label class="form-label fw-bold text-dark">Texto de la Dirección</label>
     <input type="text" name="direccion_texto" class="form-control" value="{{ old('direccion_texto', $config->direccion_texto) }}" placeholder="Ej: Av. Universitaria s/n, Huánuco">
     <small class="text-muted">La dirección física corta que se imprimirá en el pie de página.</small>
