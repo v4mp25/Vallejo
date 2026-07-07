@@ -42,95 +42,33 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="cv-card card-body p-5">
-                <div class="d-flex align-items-center justify-content-between flex-column flex-md-row gap-4">
-                    <div>
+                <div class="d-flex align-items-start justify-content-between flex-column flex-md-row gap-4">
+                    <div class="flex-grow-1">
                         <i class="fas fa-user-graduate fa-4x cv-primary mb-3"></i>
                         <h2 class="h4 fw-bold">Bienvenido al portal del alumno</h2>
                         <p class="text-muted mb-2">{{ $phrase }}</p>
-                        <p class="small text-muted mb-0">{{ $fact }}</p>
                     </div>
                     <div class="text-start text-md-end">
                         <span class="badge bg-primary rounded-pill px-3 py-2">Dato curioso</span>
-                        <p class="mt-3 mb-0 small text-muted" style="max-width: 360px;">
-                            Hoy es {{ $today->isoFormat('D [de] MMMM') }}.
-                            {{ $special ? $special['subtitle'] : 'Aprovecha el día para descubrir algo nuevo y curioso.' }}
-                        </p>
+                        <p class="mt-3 mb-1 small text-muted" style="max-width: 360px;">{{ $fact }}</p>
+                        <p class="mb-0 text-secondary" style="font-size:.85rem;">Hoy es {{ $today->isoFormat('D [de] MMMM') }}.</p>
                     </div>
                 </div>
-                <div class="dashboard-animation-wrapper mt-4 pt-3 border-top">
-                    <div class="dashboard-animation {{ $special ? 'dashboard-animation--' . $special['key'] : 'dashboard-animation--default' }}">
-                        <div class="dashboard-animation-icon">
-                            <i class="fas {{ $special['icon'] ?? 'fa-lightbulb' }}"></i>
+                <div class="dashboard-scene-wrapper mt-4 pt-4 border-top">
+                    <div class="dashboard-scene {{ $special ? 'dashboard-scene--' . $special['key'] : 'dashboard-scene--default' }}">
+                        <div class="scene-horizon"></div>
+                        <div class="scene-vehicle" aria-hidden="true">
+                            <div class="vehicle-body"></div>
+                            <div class="vehicle-cab"></div>
+                            <div class="vehicle-wheel vehicle-wheel--left"></div>
+                            <div class="vehicle-wheel vehicle-wheel--right"></div>
                         </div>
-                        <div class="dashboard-animation-text">
+                        <div class="dashboard-scene-copy">
                             <strong>{{ $special['title'] ?? 'Ritmo de aprendizaje' }}</strong>
                             <span>{{ $special['subtitle'] ?? 'Las fechas especiales añaden color al estudio y la imaginación.' }}</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-12">
-            @php
-                $carouselSlides = [
-                    [
-                        'title' => $special['title'] ?? 'Hoy brilla tu aprendizaje',
-                        'subtitle' => $special['subtitle'] ?? 'Cada fecha es una oportunidad para encender tu curiosidad y avanzar con energía.',
-                        'icon' => $special['icon'] ?? 'fa-star',
-                        'theme' => $special ? $special['key'] : 'default',
-                    ],
-                    [
-                        'title' => 'Momentos inolvidables',
-                        'subtitle' => 'Las fechas especiales también son un motivo para aprender y celebrar juntos.',
-                        'icon' => 'fa-calendar-check',
-                        'theme' => 'celebrate',
-                    ],
-                    [
-                        'title' => 'Imagina y descubre',
-                        'subtitle' => 'Cada día trae una nueva historia, una nueva pregunta y un nuevo descubrimiento.',
-                        'icon' => 'fa-magic',
-                        'theme' => 'magic',
-                    ],
-                ];
-            @endphp
-
-            <div id="dashboardHeroCarousel" class="carousel slide dashboard-hero-panel" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @foreach ($carouselSlides as $index => $slide)
-                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }} dashboard-hero-slide dashboard-hero-slide--{{ $slide['theme'] }}">
-                            <div class="dashboard-hero-slide-content row align-items-center gy-3">
-                                <div class="col-lg-5 order-lg-2">
-                                    <div class="dashboard-hero-illustration">
-                                        <div class="hero-player">
-                                            <div class="player-head"></div>
-                                            <div class="player-body"></div>
-                                            <div class="player-arm player-arm--left"></div>
-                                            <div class="player-arm player-arm--right"></div>
-                                            <div class="player-leg player-leg--left"></div>
-                                            <div class="player-leg player-leg--right"></div>
-                                        </div>
-                                        <div class="hero-ball"></div>
-                                        <div class="hero-ball-trail"></div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-7 order-lg-1">
-                                    <h3 class="mb-2">{{ $slide['title'] }}</h3>
-                                    <p class="mb-0">{{ $slide['subtitle'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <button class="carousel-control-prev" type="button" data-bs-target="#dashboardHeroCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#dashboardHeroCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
             </div>
         </div>
     </div>

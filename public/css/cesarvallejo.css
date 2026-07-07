@@ -254,6 +254,161 @@ body.cv-app {
     margin-bottom: 16px;
 }
 
+.dashboard-scene-wrapper {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(1, 72, 164, 0.12);
+}
+
+.dashboard-scene {
+    position: relative;
+    min-height: 280px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(135deg, #0f4b7d, #1f83c9);
+    color: #fff;
+}
+
+.dashboard-scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.15), transparent 35%),
+                linear-gradient(180deg, rgba(255,255,255,0.08), transparent 40%);
+    pointer-events: none;
+}
+
+.dashboard-scene .scene-horizon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 58px;
+    height: 122px;
+    background: rgba(255,255,255,0.08);
+    box-shadow: inset 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.dashboard-scene .scene-vehicle {
+    position: absolute;
+    bottom: 56px;
+    left: -250px;
+    width: 220px;
+    height: 80px;
+    animation: drive 10s linear infinite;
+    z-index: 2;
+}
+
+.dashboard-scene .vehicle-body {
+    position: absolute;
+    left: 0;
+    bottom: 14px;
+    width: 170px;
+    height: 48px;
+    border-radius: 22px 22px 18px 18px;
+    background: rgba(255,255,255,0.9);
+}
+
+.dashboard-scene .vehicle-cab {
+    position: absolute;
+    left: 100px;
+    bottom: 42px;
+    width: 60px;
+    height: 30px;
+    border-radius: 18px 18px 12px 12px;
+    background: rgba(255,255,255,0.95);
+}
+
+.dashboard-scene .vehicle-wheel {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.9);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,0.18);
+}
+
+.dashboard-scene .vehicle-wheel--left {
+    left: 18px;
+    bottom: 6px;
+}
+
+.dashboard-scene .vehicle-wheel--right {
+    right: 18px;
+    bottom: 6px;
+}
+
+.dashboard-scene-copy {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.dashboard-scene-copy strong {
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+
+.dashboard-scene-copy span {
+    opacity: 0.92;
+    font-size: 0.98rem;
+}
+
+.dashboard-scene--worldcup {
+    background: linear-gradient(135deg, #0d4a88, #0069c0);
+}
+
+.dashboard-scene--halloween {
+    background: linear-gradient(135deg, #3d0f4c, #8e2c72);
+}
+
+.dashboard-scene--holiday {
+    background: linear-gradient(135deg, #9c1c60, #f08f12);
+}
+
+.dashboard-scene--newyear {
+    background: linear-gradient(135deg, #1b3e78, #5d9bff);
+}
+
+.dashboard-scene--default {
+    background: linear-gradient(135deg, #0f4b7d, #1f83c9);
+}
+
+.dashboard-scene--halloween .scene-vehicle .vehicle-body {
+    background: rgba(255,255,255,0.82);
+}
+
+.dashboard-scene--holiday .scene-vehicle .vehicle-body {
+    background: rgba(255,255,255,0.95);
+}
+
+.dashboard-scene--newyear .scene-vehicle .vehicle-body {
+    background: rgba(255,255,255,0.9);
+}
+
+@keyframes drive {
+    0% {
+        left: -260px;
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-4px);
+    }
+    50% {
+        left: calc(100% + 20px);
+        transform: translateY(0);
+    }
+    100% {
+        left: calc(100% + 20px);
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 991px) {
     .cv-dashboard-wrap { flex-direction: column; }
     .cv-sidebar { width: 100%; }
