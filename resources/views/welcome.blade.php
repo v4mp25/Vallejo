@@ -24,7 +24,7 @@
         .cv-navbar-wrap { position: absolute; top: 0; left: 0; right: 0; z-index: 100; }
         .cv-navbar-wrap .navbar { background: transparent !important; transition: background .35s, box-shadow .35s; }
         .cv-navbar-wrap.scrolled .navbar { background: rgba(255,255,255,.97) !important; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
-        .cv-navbar-wrap .nav-link { color: #fff !important; font-weight: 500; font-size: 1rem; padding: 12px 16px !important; }
+        .cv-navbar-wrap .nav-link { color: #fff !important; font-weight: 500; font-size: 0.9rem; padding: 10px 12px !important; }
         .cv-navbar-wrap.scrolled .nav-link:not(.btn-login) { color: #333 !important; }
         
         /* ===== MENU DESPLEGABLE ===== */
@@ -87,7 +87,7 @@
         <div class="container d-flex justify-content-end text-white">
             <span class="fw-semibold fst-italic">
                 <i class="fas fa-quote-left text-warning me-1 small"></i>
-                {{ $config->frase_topbar ?? 'Formamos líderes con corazón vallejiano' }}
+                {{ $config->frase_topbar ?? 'xddd líderes con corazón vallejiano' }}
                 <i class="fas fa-quote-right text-warning ms-1 small"></i>
             </span>
         </div>
@@ -125,10 +125,24 @@
                         </ul>
                     </div>
 
-                    <a class="nav-link text-white" href="#seccion-avisos-publicos">Avisos</a>
-                    <a class="nav-link text-white" href="#">Calendario</a>
-                    <a class="nav-link text-white" href="#">Repositorio</a>
-                    <a class="nav-link btn-login ms-lg-3 bg-warning text-dark border-warning fw-bold shadow-sm" id="btn-abrir-login" role="button">
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/gestion-institucional') }}" id="navbarGestion">
+                            Gestión Institucional
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarGestion">
+                            <li><a class="dropdown-item" href="{{ url('/gestion-institucional#personal') }}"><i class="fas fa-users text-primary me-2"></i>3.1 Personal Institucional</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/gestion-institucional#organigrama') }}"><i class="fas fa-sitemap text-success me-2"></i>3.2 Organigrama</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/gestion-institucional#organos') }}"><i class="fas fa-handshake text-warning me-2"></i>3.3 Órganos de Participación</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/gestion-institucional#instrumentos') }}"><i class="fas fa-file-pdf text-danger me-2"></i>3.4 Instrumentos de Gestión</a></li>
+                        </ul>
+                    </div>
+                    <a class="nav-link text-white" href="{{ url('/servicio-educativo') }}">Servicio Educativo</a>
+                    <a class="nav-link text-white" href="{{ url('/comunidad-educativa') }}">Comunidad Educativa</a>
+                    <a class="nav-link text-white" href="{{ url('/logros-reconocimientos') }}">Logros y Reconocimientos</a>
+                    <a class="nav-link text-white" href="{{ url('/galeria-institucional') }}">Galería Institucional</a>
+                    <a class="nav-link text-white" href="{{ url('/noticias-comunicados') }}">Noticias y Comunicados</a>
+
+                    <a class="nav-link btn-login ms-lg-2 bg-warning text-dark border-warning fw-bold shadow-sm" id="btn-abrir-login" role="button" style="font-size: 0.85rem; padding: 8px 18px !important;">
                         <i class="fas fa-user me-1"></i> Login
                     </a>
                 </div>
@@ -154,7 +168,7 @@
             </h1>
             
             <p id="hero-subtitle" class="mb-4 text-white-50 max-w-xl mx-auto">
-                {{ $config->hero_subtitulo ?? 'Institución Educativa Emblemática "César Vallejo" — Brindando una educación integral basada en la autodisciplina, la cultura y los valores morales en la región Huánuco.' }}
+                {{ $config->hero_subtitulo ?? 'formamos.' }}
             </p>
             
             <button type="button" class="btn btn-warning btn-lg rounded-pill px-4 fw-bold shadow" id="btn-hero-login">
@@ -227,36 +241,56 @@
         </div>
     </div>
 
-    <section class="admin-section bg-light" id="seccion-plana-administrativa">
-        <div class="container text-center py-4" style="max-width: 980px;">
-            <h2 class="fw-bold text-dark mb-2">Plana Administrativa</h2>
-            <p class="text-muted mb-5">Equipo directivo de nuestra institución educativa.</p>
+    <section class="py-4 text-white" style="background-color: var(--cv-primary-dark); border-top: 4px solid #ffc107;">
+        <div class="container">
+            <div class="row align-items-center g-3 text-center text-md-start">
+                
+                {{-- Izquierda: Redes sociales --}}
+                <div class="col-md-3 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                    <span class="small opacity-90">Síguenos en nuestras redes:</span>
+                    <a href="{{ $config->link_facebook ?? 'https://www.facebook.com' }}" target="_blank" class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 32px; height: 32px; background-color: #1877f2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fab fa-facebook-f text-white" style="font-size: 0.85rem;"></i>
+                    </a>
+                    <a href="{{ $config->link_youtube ?? 'https://www.youtube.com' }}" target="_blank" class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 32px; height: 32px; background-color: #ff0000; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fab fa-youtube text-white" style="font-size: 0.85rem;"></i>
+                    </a>
+                    <a href="{{ $config->link_instagram ?? 'https://www.instagram.com' }}" target="_blank" class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 32px; height: 32px; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fab fa-instagram text-white" style="font-size: 0.85rem;"></i>
+                    </a>
+                </div>
 
-            <div class="row justify-content-center g-4">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm p-3">
-                        <img class="card-img-top rounded" src="/media/administracion/director" alt="Director" style="height: 350px; object-fit: cover;">
-                        <div class="card-body p-2 mt-3">
-                            <h5 class="fw-bold text-dark mb-0">Roger Manuel Rufino</h5>
-                            <p class="text-primary fw-semibold mb-0">Director General</p>
-                        </div>
+                {{-- Centro: Frase institucional --}}
+                <div class="col-md-5 text-center">
+                    <span class="fst-italic" style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.05rem; letter-spacing: 0.3px;">
+                        "{{ $config->frase_topbar ?? 'Formamos líderes con corazón vallejiano' }}"
+                    </span>
+                </div>
+
+                {{-- Derecha: Ubicación y correo --}}
+                <div class="col-md-4 text-md-end text-center">
+                    <div class="d-flex flex-column gap-1 small align-items-md-end align-items-center">
+                        @if(isset($config) && $config->link_maps)
+                            <a href="{{ $config->link_maps }}" target="_blank" class="text-white text-decoration-none" style="transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                <i class="fas fa-map-marker-alt text-warning me-1"></i> {{ $config->direccion_texto ?? 'Amarilis, Huánuco, Perú' }}
+                            </a>
+                        @else
+                            <span class="text-white opacity-90">
+                                <i class="fas fa-map-marker-alt text-warning me-1"></i> {{ $config->direccion_texto ?? 'Amarilis, Huánuco, Perú' }}
+                            </span>
+                        @endif
+
+                        <a href="mailto:{{ $config->correo_contacto ?? 'contacto@cesarvallejo.edu.pe' }}" class="text-white text-decoration-none" style="transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                            <i class="fas fa-envelope text-warning me-1"></i> {{ $config->correo_contacto ?? 'contacto@cesarvallejo.edu.pe' }}
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm p-3">
-                        <img class="card-img-top rounded" src="/media/administracion/subdirector" alt="Subdirector" style="height: 350px; object-fit: cover;">
-                        <div class="card-body p-2 mt-3">
-                            <h5 class="fw-bold text-dark mb-0">Vidal Ticona</h5>
-                            <p class="text-primary fw-semibold mb-0">Subdirector Académico</p>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
 
-    <footer class="copyright-cesarvallejo">
-        <p class="mb-0">Copyright &copy; {{ date('Y') }} I.E. César Vallejo</p>
+    <footer class="copyright-cesarvallejo" style="background-color: #011e3c; padding: 15px; text-align: center; color: rgba(255,255,255,.9);">
+        <p class="mb-0 small">Copyright &copy; {{ date('Y') }} I.E. César Vallejo — Todos los derechos reservados.</p>
     </footer>
 
     {{-- ===== MODAL LOGIN ===== --}}
