@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Matricula extends Model
 {
-    protected $fillable = ['alumno_id', 'aula_id'];
+    protected $fillable = [
+        'alumno_id',
+        'aula_id',
+        'año_academico',
+        'estado',
+        'celular_apoderado',
+    ];
 
     public function alumno()
     {

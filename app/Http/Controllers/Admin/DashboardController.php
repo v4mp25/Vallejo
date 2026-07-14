@@ -4,23 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use App\Models\User; 
-use App\Models\Aula; 
+use App\Models\ConfiguracionWeb;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
-      
-        $profesores = User::where('rol', 'profesor')
-                          ->latest()
-                          ->take(50)
-                          ->get();
+        $config = ConfiguracionWeb::first() ?? new ConfiguracionWeb();
 
-      
-        $aulas = Aula::latest()->get();
-
-     
-        return view('admin.dashboard', compact('profesores', 'aulas'));
+        return view('admin.configuracion', compact('config'));
     }
 }

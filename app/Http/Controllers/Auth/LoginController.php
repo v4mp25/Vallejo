@@ -40,14 +40,18 @@ class LoginController extends Controller
         
         switch ($user->rol) {
             case 'admin':
+            case 'director':
                 $redirectUrl = '/admin/dashboard';
                 break;
             case 'profesor':
-            case 'director':
                 $redirectUrl = '/profesor/dashboard';
                 break;
             case 'psicologo':
                 $redirectUrl = '/psicologo/dashboard';
+                break;
+            case 'secretaria':
+            case 'auxiliar':
+                $redirectUrl = '/auxiliar/dashboard';
                 break;
             case 'padre':
                 $redirectUrl = '/padres/dashboard';

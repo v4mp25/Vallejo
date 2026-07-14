@@ -24,12 +24,43 @@
 
     {{-- ===================== SECCIÓN NOTAS ===================== --}}
     <div class="cv-card card-body p-4">
-        <h5 class="fw-bold mb-1">
-            <i class="fas fa-edit me-2 cv-primary"></i> Registrar / Editar notas
-        </h5>
-        <p class="text-muted small mb-3">
-            Ingresa las notas directamente en la tabla. Las notas se guardan por bimestre.
-        </p>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <div>
+                <h5 class="fw-bold mb-1">
+                    <i class="fas fa-edit me-2 cv-primary"></i> Registrar / Editar notas
+                </h5>
+                <p class="text-muted small mb-0">
+                    Ingresa las notas directamente en la tabla o utiliza un archivo Excel para actualizar de forma masiva.
+                </p>
+            </div>
+            @if (!$alumnos->isEmpty())
+                <div class="d-flex gap-2">
+                    <a href="{{ route('profesor.notas.exportar', $asignacion->id) }}" 
+                       class="btn btn-outline-success rounded-pill btn-sm d-flex align-items-center px-3 hover-lift">
+                        <i class="fas fa-file-excel me-2"></i> Descargar Plantilla
+                    </a>
+                    <button type="button" 
+                            class="btn btn-success rounded-pill btn-sm d-flex align-items-center px-3 hover-lift" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalImportarNotas">
+                        <i class="fas fa-file-upload me-2"></i> Subir Excel
+                    </button>
+                </div>
+            @endif
+        </div>
+
+        @if (session('import_errors'))
+            <div class="alert alert-warning border-warning border-opacity-25 rounded-3 mb-4 shadow-sm">
+                <h6 class="fw-bold text-warning-emphasis mb-2">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Algunos registros no pudieron ser importados:
+                </h6>
+                <ul class="mb-0 small text-warning-emphasis ps-3" style="max-height: 200px; overflow-y: auto;">
+                    @foreach (session('import_errors') as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form action="{{ route('profesor.notas.guardar', $asignacion->id) }}" method="POST">
             @csrf
@@ -49,7 +80,6 @@
                                 <th class="text-center">Bim. II</th>
                                 <th class="text-center">Bim. III</th>
                                 <th class="text-center">Bim. IV</th>
-                                <th class="text-center">Promedio</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,10 +90,6 @@
                                     $b2 = $notasAlumno->firstWhere('periodo', 'B2')->calificacion ?? '';
                                     $b3 = $notasAlumno->firstWhere('periodo', 'B3')->calificacion ?? '';
                                     $b4 = $notasAlumno->firstWhere('periodo', 'B4')->calificacion ?? '';
-
-                                    // Calcular promedio de las notas numéricas
-                                    $validas = collect([$b1, $b2, $b3, $b4])->filter(fn($v) => is_numeric($v));
-                                    $promedio = $validas->count() > 0 ? round($validas->avg(), 1) : '—';
                                 @endphp
                                 <tr>
                                     <td class="text-muted">{{ $i + 1 }}</td>
@@ -85,11 +111,6 @@
                                                    value="{{ $periodo }}">
                                         </td>
                                     @endforeach
-                                    <td class="text-center">
-                                        <span class="badge {{ is_numeric($promedio) && $promedio >= 11 ? 'bg-success' : (is_numeric($promedio) ? 'bg-danger' : 'bg-secondary') }}">
-                                            {{ $promedio }}
-                                        </span>
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -102,6 +123,47 @@
             @endif
         </form>
     </div>
+
+    {{-- Modal para importar notas --}}
+    @if (!$alumnos->isEmpty())
+        <div class="modal fade" id="modalImportarNotas" tabindex="-1" aria-labelledby="modalImportarNotasLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="modalImportarNotasLabel">
+                            <i class="fas fa-file-excel text-success me-2"></i> Importar Notas desde Excel
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('profesor.notas.importar', $asignacion->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body py-4">
+                            <div class="alert alert-info border-info border-opacity-25 rounded-3 mb-3 small">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Para asegurar una correcta importación, descarga la plantilla y complétala sin alterar la estructura (las columnas `ID_Estudiante` y `DNI` se usan para identificar a los alumnos).
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="archivo_excel" class="form-label fw-semibold small">Selecciona el archivo Excel (.xlsx, .xls)</label>
+                                <input class="form-control rounded-3" type="file" id="archivo_excel" name="archivo_excel" accept=".xlsx, .xls" required>
+                            </div>
+                            
+                            <div class="text-muted small">
+                                <i class="fas fa-spell-check me-1"></i>
+                                Las notas cualitativas en minúsculas (a, b, c, d, ad) se convertirán automáticamente a mayúsculas.
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">
+                                <i class="fas fa-upload me-1"></i> Cargar Notas
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('styles')
@@ -114,6 +176,13 @@
     .nota-input:focus {
         border-color: var(--cv-primary);
         box-shadow: 0 0 0 .15rem rgba(var(--cv-primary-rgb), .2);
+    }
+    .hover-lift {
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 </style>
 @endpush

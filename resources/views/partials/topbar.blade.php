@@ -8,7 +8,7 @@
     <div class="d-flex align-items-center gap-3">
         <span class="text-muted d-none d-md-inline">
             <i class="fas fa-user-circle me-1"></i>
-            {{ auth()->user()->name ?? auth()->user()->nombre ?? 'Usuario' }}
+            {{ auth()->user()->nombre_completo ?? auth()->user()->nombres ?? 'Usuario' }}
         </span>
     </div>
 </header>

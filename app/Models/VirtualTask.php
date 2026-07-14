@@ -15,6 +15,7 @@ class VirtualTask extends Model
         'due_date',
         'submission_file_path',
         'submission_text',
+        'grade',
     ];
 
     protected $casts = [

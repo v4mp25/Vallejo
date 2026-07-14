@@ -43,33 +43,69 @@ class ServicioEducativoController extends Controller
         return back()->with('success', '¡Textos descriptivos del Servicio Educativo actualizados!');
     }
 
+    // 4.1 Áreas Curriculares
     public function guardarArea(Request $request)
     {
         $request->validate([
             'nombre'      => 'required|string|max:255',
-            'icono'       => 'required|string|max:100',
+            'imagen'      => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'descripcion' => 'required|string',
         ]);
 
-        AreaCurricular::create($request->only(['nombre', 'icono', 'descripcion']));
+        $imagePath = $request->file('imagen')->store('areas', 'public');
+
+        AreaCurricular::create([
+            'nombre'      => $request->input('nombre'),
+            'imagen'      => $imagePath,
+            'descripcion' => $request->input('descripcion'),
+        ]);
 
         return back()->with('success', '¡Área curricular agregada con éxito!');
+    }
+
+    public function actualizarArea(Request $request, $id)
+    {
+        $request->validate([
+            'nombre'      => 'required|string|max:255',
+            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'descripcion' => 'required|string',
+        ]);
+
+        $area = AreaCurricular::findOrFail($id);
+        $area->nombre = $request->input('nombre');
+        $area->descripcion = $request->input('descripcion');
+
+        if ($request->hasFile('imagen')) {
+            if ($area->imagen) {
+                Storage::disk('public')->delete($area->imagen);
+            }
+            $area->imagen = $request->file('imagen')->store('areas', 'public');
+        }
+
+        $area->save();
+
+        return back()->with('success', '¡Área curricular actualizada con éxito!');
     }
 
     public function eliminarArea($id)
     {
         $area = AreaCurricular::findOrFail($id);
+        if ($area->imagen) {
+            Storage::disk('public')->delete($area->imagen);
+        }
         $area->delete();
 
         return back()->with('success', '¡Área curricular eliminada!');
     }
 
+    // 4.3 Proyectos Bandera
     public function guardarProyecto(Request $request)
     {
         $request->validate([
             'titulo'      => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'imagen'      => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'link'        => 'nullable|string|max:255',
         ]);
 
         $imagePath = $request->file('imagen')->store('proyectos', 'public');
@@ -78,9 +114,36 @@ class ServicioEducativoController extends Controller
             'titulo'      => $request->input('titulo'),
             'descripcion' => $request->input('descripcion'),
             'imagen'      => $imagePath,
+            'link'        => $request->input('link'),
         ]);
 
         return back()->with('success', '¡Proyecto institucional guardado con éxito!');
+    }
+
+    public function actualizarProyecto(Request $request, $id)
+    {
+        $request->validate([
+            'titulo'      => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'imagen'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'link'        => 'nullable|string|max:255',
+        ]);
+
+        $proyecto = ProyectoInstitucional::findOrFail($id);
+        $proyecto->titulo = $request->input('titulo');
+        $proyecto->descripcion = $request->input('descripcion');
+        $proyecto->link = $request->input('link');
+
+        if ($request->hasFile('imagen')) {
+            if ($proyecto->imagen) {
+                Storage::disk('public')->delete($proyecto->imagen);
+            }
+            $proyecto->imagen = $request->file('imagen')->store('proyectos', 'public');
+        }
+
+        $proyecto->save();
+
+        return back()->with('success', '¡Proyecto institucional actualizado con éxito!');
     }
 
     public function eliminarProyecto($id)

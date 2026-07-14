@@ -22,9 +22,6 @@
                     @endif
                 </p>
             </div>
-            <a href="#" class="btn btn-light">
-                <i class="fas fa-users me-1"></i> Ver mi salón
-            </a>
         </section>
     @endif
 

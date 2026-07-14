@@ -10,8 +10,6 @@ use App\Http\Controllers\Psicologo\PsicologoController;
 use App\Http\Controllers\Api\AvisosController;
 use App\Http\Controllers\Api\PadresController;
 use App\Http\Controllers\AulaVirtualController;
-use App\Imports\AlumnosImport;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ConfiguracionWeb;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\InstitucionController;
@@ -21,6 +19,8 @@ use App\Http\Controllers\Admin\ComunidadEducativaController;
 use App\Http\Controllers\Admin\LogroController;
 use App\Http\Controllers\Admin\GaleriaInstitucionalController;
 use App\Http\Controllers\Admin\NoticiasComunicadosController;
+use App\Http\Controllers\Admin\DocenteController;
+use App\Http\Controllers\Admin\ImportarAlumnosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,10 +33,55 @@ Route::get('/', function () {
         'telefono_contacto' => '+51 927 736 128',
         'correo_contacto' => 'contacto@cesarvallejo.edu.pe'
     ]);
-    return view('welcome', compact('config'));
+
+    $now = now()->toDateString();
+
+    // 9.5: Próximas Actividades
+    $actividadesProximas = \App\Models\ActividadProxima::where(function ($q) use ($now) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', $now);
+        })
+        ->orderBy('fecha', 'asc')
+        ->take(6)
+        ->get();
+
+    // 9.2: Comunicados Oficiales
+    $comunicados = \App\Models\Comunicado::where(function ($q) use ($now) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', $now);
+        })
+        ->orderBy('fecha', 'desc')
+        ->get();
+
+    // 9.1: Noticias Destacadas
+    $noticias = \App\Models\Noticia::where(function ($q) use ($now) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', $now);
+        })
+        ->orderBy('fecha', 'desc')
+        ->take(6)
+        ->get();
+
+    // 9.3: Agenda Escolar
+    $agenda = \App\Models\Agenda::where(function ($q) use ($now) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', $now);
+        })
+        ->orderBy('fecha_inicio', 'asc')
+        ->get();
+
+    // 9.4: Boletines Mensuales
+    $boletines = \App\Models\Boletin::where(function ($q) use ($now) {
+            $q->whereNull('fecha_limite')
+              ->orWhere('fecha_limite', '>=', $now);
+        })
+        ->orderBy('id', 'desc')
+        ->get();
+
+    return view('welcome', compact('config', 'actividadesProximas', 'comunicados', 'noticias', 'agenda', 'boletines'));
 })->name('home');
 
-Route::get('/login', fn() => view('welcome'))->name('login');
+Route::get('/login', fn() => redirect('/?login=1'))->name('login');
 Route::get('/nuestra-institucion', function () {
     $info = \App\Models\InstitucionInfo::first() ?? new \App\Models\InstitucionInfo();
     return view('nuestra-institucion', compact('info'));
@@ -45,7 +90,10 @@ Route::get('/gestion-institucional', function () {
     $info = \App\Models\GestionInstitucional::first() ?? new \App\Models\GestionInstitucional();
     $personal = \App\Models\PersonalInstitucional::whereIn('categoria', ['directivo', 'administrativo'])->get();
     $documentos = \App\Models\DocumentoGestion::all();
-    return view('gestion-institucional', compact('info', 'personal', 'documentos'));
+    $coneiDocs = \App\Models\OrganoDocumento::where('organo', 'conei')->get();
+    $apafaDocs = \App\Models\OrganoDocumento::where('organo', 'apafa')->get();
+
+    return view('gestion-institucional', compact('info', 'personal', 'documentos', 'coneiDocs', 'apafaDocs'));
 })->name('gestion-institucional');
 Route::get('/servicio-educativo', function () {
     $info = \App\Models\ServicioEducativo::first() ?? new \App\Models\ServicioEducativo();
@@ -69,13 +117,7 @@ Route::get('/galeria-institucional', function () {
     $actividades = \App\Models\ActividadPedagogica::orderBy('fecha', 'desc')->get();
     return view('galeria-institucional', compact('fotos', 'videos', 'eventos', 'actividades'));
 })->name('galeria-institucional');
-Route::get('/noticias-comunicados', function () {
-    $noticias = \App\Models\Noticia::orderBy('fecha', 'desc')->get();
-    $comunicados = \App\Models\Comunicado::orderBy('fecha', 'desc')->get();
-    $agenda = \App\Models\Agenda::orderBy('fecha_inicio', 'asc')->get();
-    $boletines = \App\Models\Boletin::all();
-    return view('noticias-comunicados', compact('noticias', 'comunicados', 'agenda', 'boletines'));
-})->name('noticias-comunicados');
+Route::get('/noticias-comunicados', fn() => redirect('/'))->name('noticias-comunicados');
 
 Route::get('/media/hero/{id}', function ($id) {
     $imagenes = [
@@ -108,18 +150,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Importar alumnos (Excel/CSV)
-|--------------------------------------------------------------------------
-*/
-Route::get('/importar-alumnos', fn() => view('admin.importar-alumnos'))->name('importar-alumnos');
-Route::post('/importar-alumnos', function (Request $request) {
-    $request->validate(['archivo' => 'required|file']);
-    Excel::import(new AlumnosImport, $request->file('archivo'));
-    return back()->with('success', '¡Alumnos importados correctamente!');
-})->name('importar-alumnos.store');
-
-/*
-|--------------------------------------------------------------------------
 | API pública (sin auth)
 |--------------------------------------------------------------------------
 */
@@ -146,7 +176,7 @@ Route::middleware('auth')->prefix('api')->group(function () {
 |--------------------------------------------------------------------------
 */
 // AQUÍ ESTÁ LA SOLUCIÓN: Este bloque ahora está libre y fuera de la API
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin,director'])->group(function () {
     
     Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
     
@@ -208,8 +238,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Gestión Institucional
     Route::get('/admin/gestion-institucional',               [GestionInstitucionalController::class, 'index'])->name('admin.gestion-institucional.index');
     Route::post('/admin/gestion-institucional/guardar',       [GestionInstitucionalController::class, 'guardarTextosOrganigrama'])->name('admin.gestion-institucional.guardar');
-    Route::post('/admin/gestion-institucional/personal',      [GestionInstitucionalController::class, 'guardarPersonal'])->name('admin.gestion-institucional.personal.guardar');
+    Route::post('/admin/gestion-institucional/personal',     [GestionInstitucionalController::class, 'guardarPersonal'])->name('admin.gestion-institucional.personal.guardar');
+    Route::put('/admin/gestion-institucional/personal/{id}',  [GestionInstitucionalController::class, 'actualizarPersonal'])->name('admin.gestion-institucional.personal.actualizar');
     Route::delete('/admin/gestion-institucional/personal/{id}',[GestionInstitucionalController::class, 'eliminarPersonal'])->name('admin.gestion-institucional.personal.eliminar');
+    Route::post('/admin/gestion-institucional/organos/documentos', [GestionInstitucionalController::class, 'guardarOrganoDocumento'])->name('admin.gestion-institucional.organos.documento.guardar');
+    Route::delete('/admin/gestion-institucional/organos/documentos/{id}', [GestionInstitucionalController::class, 'eliminarOrganoDocumento'])->name('admin.gestion-institucional.organos.documento.eliminar');
     Route::post('/admin/gestion-institucional/documentos',    [GestionInstitucionalController::class, 'guardarDocumento'])->name('admin.gestion-institucional.documentos.guardar');
     Route::delete('/admin/gestion-institucional/documentos/{id}',[GestionInstitucionalController::class, 'eliminarDocumento'])->name('admin.gestion-institucional.documentos.eliminar');
 
@@ -217,8 +250,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/servicio-educativo',               [ServicioEducativoController::class, 'index'])->name('admin.servicio-educativo.index');
     Route::post('/admin/servicio-educativo/guardar',       [ServicioEducativoController::class, 'guardarTextos'])->name('admin.servicio-educativo.guardar');
     Route::post('/admin/servicio-educativo/areas',         [ServicioEducativoController::class, 'guardarArea'])->name('admin.servicio-educativo.areas.guardar');
+    Route::put('/admin/servicio-educativo/areas/{id}',      [ServicioEducativoController::class, 'actualizarArea'])->name('admin.servicio-educativo.areas.actualizar');
     Route::delete('/admin/servicio-educativo/areas/{id}',  [ServicioEducativoController::class, 'eliminarArea'])->name('admin.servicio-educativo.areas.eliminar');
     Route::post('/admin/servicio-educativo/proyectos',     [ServicioEducativoController::class, 'guardarProyecto'])->name('admin.servicio-educativo.proyectos.guardar');
+    Route::put('/admin/servicio-educativo/proyectos/{id}',  [ServicioEducativoController::class, 'actualizarProyecto'])->name('admin.servicio-educativo.proyectos.actualizar');
     Route::delete('/admin/servicio-educativo/proyectos/{id}',[ServicioEducativoController::class, 'eliminarProyecto'])->name('admin.servicio-educativo.proyectos.eliminar');
 
     // Comunidad Educativa
@@ -253,6 +288,29 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/admin/noticias-comunicados/agenda/{id}',      [NoticiasComunicadosController::class, 'destroyAgenda'])->name('admin.noticias-comunicados.agenda.eliminar');
     Route::post('/admin/noticias-comunicados/boletines',          [NoticiasComunicadosController::class, 'storeBoletin'])->name('admin.noticias-comunicados.boletines.store');
     Route::delete('/admin/noticias-comunicados/boletines/{id}',   [NoticiasComunicadosController::class, 'destroyBoletin'])->name('admin.noticias-comunicados.boletines.eliminar');
+    Route::post('/admin/noticias-comunicados/actividades-proximas', [NoticiasComunicadosController::class, 'storeActividadProxima'])->name('admin.noticias-comunicados.actividades-proximas.store');
+    Route::delete('/admin/noticias-comunicados/actividades-proximas/{id}', [NoticiasComunicadosController::class, 'destroyActividadProxima'])->name('admin.noticias-comunicados.actividades-proximas.eliminar');
+
+    // Gestión de Docentes
+    Route::get('/admin/docentes', [DocenteController::class, 'index'])->name('admin.docentes.index');
+    Route::post('/admin/docentes', [DocenteController::class, 'store'])->name('admin.docentes.store');
+    Route::put('/admin/docentes/{id}', [DocenteController::class, 'update'])->name('admin.docentes.update');
+    Route::delete('/admin/docentes/{id}', [DocenteController::class, 'destroy'])->name('admin.docentes.eliminar');
+    Route::patch('/admin/docentes/{id}/toggle-status', [DocenteController::class, 'toggleStatus'])->name('admin.docentes.toggle-status');
+    Route::post('/admin/cursos', [DocenteController::class, 'storeCurso'])->name('admin.cursos.store');
+    Route::delete('/admin/cursos/{id}', [DocenteController::class, 'destroyCurso'])->name('admin.cursos.eliminar');
+
+    // Importación masiva de Alumnos (Excel)
+    Route::get('/admin/estudiantes/importar', [ImportarAlumnosController::class, 'index'])->name('admin.estudiantes.importar');
+    Route::get('/admin/estudiantes/importar/plantilla', [ImportarAlumnosController::class, 'plantilla'])->name('admin.estudiantes.importar.plantilla');
+    Route::post('/admin/estudiantes/importar', [ImportarAlumnosController::class, 'procesar'])->name('admin.estudiantes.importar.procesar');
+
+    // Métricas de Aula Virtual
+    Route::get('/admin/metricas', [\App\Http\Controllers\Admin\MetricasController::class, 'index'])->name('admin.metricas.index');
+
+    // Cierre de Año Académico (Solo Director)
+    Route::get('/admin/cierre-ano', [\App\Http\Controllers\Admin\CierreAnoController::class, 'index'])->name('admin.cierre-ano.index');
+    Route::post('/admin/cierre-ano/procesar', [\App\Http\Controllers\Admin\CierreAnoController::class, 'procesar'])->name('admin.cierre-ano.procesar');
 });
 
 /*
@@ -264,15 +322,23 @@ Route::middleware(['auth', 'role:profesor,director'])->group(function () {
     Route::get('/profesor/dashboard', [ProfesorDashboard::class, 'index'])->name('profesor.dashboard');
     Route::get('/profesor/clase/{id}', [ProfesorDashboard::class, 'verClase'])->name('profesor.clase');
     Route::post('/profesor/clase/{id}/notas', [ProfesorDashboard::class, 'guardarNotas'])->name('profesor.notas.guardar');
+    Route::get('/profesor/clase/{id}/exportar-plantilla', [ProfesorDashboard::class, 'exportarPlantilla'])->name('profesor.notas.exportar');
+    Route::post('/profesor/clase/{id}/importar-excel', [ProfesorDashboard::class, 'importarExcel'])->name('profesor.notas.importar');
     Route::get('/profesor/tutorados/notas', [ProfesorDashboard::class, 'notasTutorados'])->name('profesor.tutorados.notas');
+    Route::get('/profesor/tutorados/notas/exportar', [ProfesorDashboard::class, 'exportarNotasTutorados'])->name('profesor.tutorados.notas.exportar');
 
     Route::get('/profesor/aula-virtual', [AulaVirtualController::class, 'index'])->name('profesor.aula-virtual.index');
     Route::post('/profesor/aula-virtual/material', [AulaVirtualController::class, 'storeMaterial'])->name('aula-virtual.material.store');
-    Route::post('/profesor/aula-virtual/tarea', [AulaVirtualController::class, 'storeTask'])->name('aula-virtual.tarea.store');
-    Route::get('/profesor/aula-virtual/{material}', [AulaVirtualController::class, 'show'])->name('aula-virtual.show');
+    Route::put('/profesor/aula-virtual/{material}', [AulaVirtualController::class, 'update'])->name('aula-virtual.update');
+    Route::delete('/profesor/aula-virtual/{material}', [AulaVirtualController::class, 'destroy'])->name('aula-virtual.destroy');
+    Route::post('/profesor/aula-virtual/entregas/{task}/calificar', [AulaVirtualController::class, 'gradeTask'])->name('aula-virtual.entregas.grade');
+    Route::get('/profesor/aula-virtual/tarea/{material_id}/exportar-notas/{asignacion_id}', [AulaVirtualController::class, 'exportTaskGrades'])->name('aula-virtual.tarea.exportar-notas');
 
     Route::get('/profesor/psicologia', [DerivacionPsicologicaController::class, 'index'])->name('profesor.psicologia.index');
     Route::post('/profesor/psicologia/derivaciones', [DerivacionPsicologicaController::class, 'store'])->name('profesor.psicologia.store');
+
+    Route::get('/profesor/auxiliar', [\App\Http\Controllers\Profesor\DerivacionAuxiliarController::class, 'index'])->name('profesor.auxiliar.index');
+    Route::post('/profesor/auxiliar/derivaciones', [\App\Http\Controllers\Profesor\DerivacionAuxiliarController::class, 'store'])->name('profesor.auxiliar.store');
 });
 
 Route::middleware(['auth', 'role:alumno,padre'])->group(function () {
@@ -280,14 +346,18 @@ Route::middleware(['auth', 'role:alumno,padre'])->group(function () {
         return view('padres.dashboard');
     })->name('padres.dashboard');
 
-    Route::get('/alumno/dashboard', function () {
-        return view('alumno.dashboard');
-    })->name('alumno.dashboard');
+    Route::get('/alumno/dashboard', [\App\Http\Controllers\Alumno\DashboardController::class, 'index'])->name('alumno.dashboard');
 
     Route::get('/aula-virtual', [AulaVirtualController::class, 'index'])->name('aula-virtual.index');
     Route::post('/aula-virtual/tarea', [AulaVirtualController::class, 'storeTask'])->name('aula-virtual.tarea.store');
-    Route::get('/aula-virtual/{material}', [AulaVirtualController::class, 'show'])->name('aula-virtual.show');
+    Route::get('/alumno/psicologia', [\App\Http\Controllers\Alumno\DashboardController::class, 'psicologia'])->name('alumno.psicologia.index');
+    Route::get('/alumno/auxiliar', [\App\Http\Controllers\Alumno\DashboardController::class, 'auxiliar'])->name('alumno.auxiliar.index');
 });
+
+// Ruta para visualizar material accesible para cualquier usuario autenticado
+Route::get('/aula-virtual/{material}', [AulaVirtualController::class, 'show'])
+    ->middleware('auth')
+    ->name('aula-virtual.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -297,4 +367,20 @@ Route::middleware(['auth', 'role:alumno,padre'])->group(function () {
 Route::middleware(['auth', 'role:psicologo'])->prefix('psicologo')->group(function () {
     Route::get('/dashboard', [PsicologoController::class, 'index'])->name('psicologo.dashboard');
     Route::post('/citas/{cita}/asignar', [PsicologoController::class, 'asignarCita'])->name('psicologo.citas.asignar');
+    Route::post('/citas/{cita}/atendida', [PsicologoController::class, 'marcarAtendida'])->name('psicologo.citas.atendida');
+    Route::post('/materiales', [PsicologoController::class, 'storeMaterial'])->name('psicologo.materiales.store');
+    Route::delete('/materiales/{id}', [PsicologoController::class, 'destroyMaterial'])->name('psicologo.materiales.eliminar');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Módulo Auxiliares (web) - SECRETARIA
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:secretaria,auxiliar'])->prefix('auxiliar')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Auxiliar\AuxiliarController::class, 'index'])->name('auxiliar.dashboard');
+    Route::post('/citas/{cita}/asignar', [\App\Http\Controllers\Auxiliar\AuxiliarController::class, 'asignarCita'])->name('auxiliar.citas.asignar');
+    Route::post('/citas/{cita}/atendida', [\App\Http\Controllers\Auxiliar\AuxiliarController::class, 'marcarAtendida'])->name('auxiliar.citas.atendida');
+    Route::post('/materiales', [\App\Http\Controllers\Auxiliar\AuxiliarController::class, 'storeMaterial'])->name('auxiliar.materiales.store');
+    Route::delete('/materiales/{id}', [\App\Http\Controllers\Auxiliar\AuxiliarController::class, 'destroyMaterial'])->name('auxiliar.materiales.eliminar');
 });

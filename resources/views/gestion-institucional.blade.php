@@ -14,7 +14,13 @@
         body { font-family: 'Roboto', sans-serif !important; background-color: #f4f6f9; color: #333; }
         .cv-navbar-wrap { position: relative; background-color: var(--cv-primary); }
         .cv-navbar-wrap .nav-link { color: #fff !important; font-weight: 500; font-size: 0.9rem; padding: 10px 12px !important; }
-        @media (min-width: 992px) { .cv-dropdown-hover:hover > .dropdown-menu { display: block; margin-top: 0; animation: fadeIn .3s ease; } }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+            .cv-navbar-wrap .nav-link { font-size: 0.78rem !important; padding: 10px 5px !important; }
+            .navbar-brand span.fw-bold { font-size: 1.05rem !important; }
+            .navbar-brand span:last-child { font-size: 0.55rem !important; }
+            .navbar-brand img { height: 40px !important; }
+        }
+        @media (min-width: 1200px) { .cv-dropdown-hover:hover > .dropdown-menu { display: block; margin-top: 0; animation: fadeIn .3s ease; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .cv-dropdown-hover .dropdown-menu { border-radius: 12px; padding: 10px 0; }
         .cv-dropdown-hover .dropdown-item { padding: 10px 20px; font-weight: 500; color: #444; transition: all 0.2s; }
@@ -42,7 +48,7 @@
     </div>
 
     <div class="cv-navbar-wrap" style="position: relative; background-color: var(--cv-primary);">
-        <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-2">
+        <nav class="navbar navbar-expand-xl navbar-dark px-4 px-lg-5 py-2">
             <a class="navbar-brand p-0 d-flex align-items-center gap-2" href="{{ url('/') }}">
                 @if(isset($config) && $config->logo_url)
                     <img id="logo-img" src="{{ asset('storage/' . $config->logo_url) }}" alt="I.E. César Vallejo" height="50">
@@ -63,7 +69,7 @@
                     
                     <div class="nav-item dropdown cv-dropdown-hover">
                         <a class="nav-link dropdown-toggle text-white" href="{{ url('/nuestra-institucion') }}" id="navbarInstitucion">
-                            Nuestra Institución
+                            Institución
                         </a>
                         <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarInstitucion">
                             <li><a class="dropdown-item" href="{{ url('/nuestra-institucion#resena') }}"><i class="fas fa-history text-warning me-2"></i>Reseña Histórica</a></li>
@@ -75,7 +81,7 @@
 
                     <div class="nav-item dropdown cv-dropdown-hover">
                         <a class="nav-link dropdown-toggle text-white fw-bold" style="color: #ffc107 !important;" href="{{ url('/gestion-institucional') }}" id="navbarGestion">
-                            Gestión Institucional
+                            Gestión
                         </a>
                         <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarGestion">
                             <li><a class="dropdown-item" href="{{ url('/gestion-institucional#personal') }}"><i class="fas fa-users text-primary me-2"></i>3.1 Personal Institucional</a></li>
@@ -84,11 +90,55 @@
                             <li><a class="dropdown-item" href="{{ url('/gestion-institucional#instrumentos') }}"><i class="fas fa-file-pdf text-danger me-2"></i>3.4 Instrumentos de Gestión</a></li>
                         </ul>
                     </div>
-                    <a class="nav-link text-white" href="{{ url('/servicio-educativo') }}">Servicio Educativo</a>
-                    <a class="nav-link text-white" href="{{ url('/comunidad-educativa') }}">Comunidad Educativa</a>
-                    <a class="nav-link text-white" href="{{ url('/logros-reconocimientos') }}">Logros y Reconocimientos</a>
-                    <a class="nav-link text-white" href="{{ url('/galeria-institucional') }}">Galería Institucional</a>
-                    <a class="nav-link text-white" href="{{ url('/noticias-comunicados') }}">Noticias y Comunicados</a>
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/servicio-educativo') }}" id="navbarServicio">
+                            Servicio
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarServicio">
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#areas') }}"><i class="fas fa-book text-primary me-2"></i>4.1 Áreas Curriculares</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#propuesta') }}"><i class="fas fa-chalkboard-teacher text-success me-2"></i>4.2 Propuesta Pedagógica</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#proyectos') }}"><i class="fas fa-rocket text-warning me-2"></i>4.3 Proyectos Bandera</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/comunidad-educativa') }}" id="navbarComunidad">
+                            Comunidad
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarComunidad">
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#estudiantes') }}"><i class="fas fa-user-graduate text-primary me-2"></i>6.1 Estudiantes</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#padres') }}"><i class="fas fa-user-friends text-success me-2"></i>6.2 Padres de Familia</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#exalumnos') }}"><i class="fas fa-user-tie text-warning me-2"></i>6.3 Exalumnos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#aliados') }}"><i class="fas fa-handshake text-danger me-2"></i>6.4 Aliados Estratégicos</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/logros-reconocimientos') }}" id="navbarLogros">
+                            Logros
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarLogros">
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#academico') }}"><i class="fas fa-book-reader text-primary me-2"></i>7.1 Académicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#deportivo') }}"><i class="fas fa-running text-success me-2"></i>7.2 Deportivos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#artistico') }}"><i class="fas fa-palette text-warning me-2"></i>7.3 Artísticos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#cientifico') }}"><i class="fas fa-flask text-danger me-2"></i>7.4 Científicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#institucional') }}"><i class="fas fa-award text-secondary me-2"></i>7.5 Reconocimientos</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/galeria-institucional') }}" id="navbarGaleria">
+                            Galería
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarGaleria">
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#fotos') }}"><i class="fas fa-camera text-primary me-2"></i>8.1 Fotografías</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#videos') }}"><i class="fas fa-video text-success me-2"></i>8.2 Videos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#eventos') }}"><i class="fas fa-calendar-day text-warning me-2"></i>8.3 Eventos Cívicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#actividades') }}"><i class="fas fa-chalkboard text-danger me-2"></i>8.4 Actividades</a></li>
+                        </ul>
+                    </div>
+
+
 
                     <a class="nav-link btn-login ms-lg-2 bg-warning text-dark border-warning fw-bold shadow-sm" href="{{ url('/login') }}" style="font-size: 0.85rem; padding: 8px 18px !important; border-radius: 50px !important;">
                         <i class="fas fa-user me-1"></i> Login
@@ -235,13 +285,59 @@
                             <div class="col-md-6">
                                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4 border-start border-4 border-primary">
                                     <h4 class="fw-bold mb-3" style="color: var(--cv-primary);"><i class="fas fa-gavel me-2"></i> CONEI</h4>
-                                    <p class="text-muted lh-lg" style="white-space: pre-line">{{ $info->conei_descripcion ?? 'El Consejo Educativo Institucional (CONEI) es el órgano de participación, concertación y vigilancia ciudadana de la institución educativa. Está conformado por la Directora, representantes de los docentes, estudiantes, personal administrativo y padres de familia, colaborando en la gestión de calidad, transparencia y convivencia democrática.' }}</p>
+                                    <p class="text-muted lh-lg mb-3" style="white-space: pre-line">{{ $info->conei_descripcion ?? 'El Consejo Educativo Institucional (CONEI) es el órgano de participación, concertación y vigilancia ciudadana de la institución educativa. Está conformado por la Directora, representantes de los docentes, estudiantes, personal administrativo y padres de familia, colaborando en la gestión de calidad, transparencia y convivencia democrática.' }}</p>
+                                    @if(count($coneiDocs) > 0)
+                                        <hr class="text-muted my-3">
+                                        <h6 class="fw-bold text-dark mb-2"><i class="fas fa-folder-open text-primary me-1"></i> Documentos y Enlaces Oficiales:</h6>
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach($coneiDocs as $doc)
+                                                <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light border">
+                                                    <span class="small fw-semibold text-dark text-truncate me-2" title="{{ $doc->titulo }}">{{ $doc->titulo }}</span>
+                                                    <div class="d-flex gap-1">
+                                                        @if($doc->archivo_pdf)
+                                                            <a href="{{ asset('storage/' . $doc->archivo_pdf) }}" target="_blank" class="btn btn-sm btn-outline-danger px-2.5 py-0.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;">
+                                                                <i class="fas fa-file-pdf"></i> PDF
+                                                            </a>
+                                                        @endif
+                                                        @if($doc->link)
+                                                            <a href="{{ $doc->link }}" target="_blank" class="btn btn-sm btn-outline-primary px-2.5 py-0.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;">
+                                                                <i class="fas fa-external-link-alt"></i> Link
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4 border-start border-4 border-warning">
                                     <h4 class="fw-bold mb-3" style="color: #ff9800;"><i class="fas fa-handshake me-2"></i> APAFA</h4>
-                                    <p class="text-muted lh-lg" style="white-space: pre-line">{{ $info->apafa_descripcion ?? 'La Asociación de Padres de Familia (APAFA) es una organización que canaliza la participación de los padres de familia, tutores y curadores en el proceso educativo de sus hijos. Trabaja activamente en la mejora de la infraestructura escolar y en el apoyo de las actividades académicas y recreativas del colegio.' }}</p>
+                                    <p class="text-muted lh-lg mb-3" style="white-space: pre-line">{{ $info->apafa_descripcion ?? 'La Asociación de Padres de Familia (APAFA) es una organización que canaliza la participación de los padres de familia, tutores y curadores en el proceso educativo de sus hijos. Trabaja activamente en la mejora de la infraestructura escolar y en el apoyo de las actividades académicas y recreativas del colegio.' }}</p>
+                                    @if(count($apafaDocs) > 0)
+                                        <hr class="text-muted my-3">
+                                        <h6 class="fw-bold text-dark mb-2"><i class="fas fa-folder-open text-warning me-1"></i> Documentos y Enlaces Oficiales:</h6>
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach($apafaDocs as $doc)
+                                                <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light border">
+                                                    <span class="small fw-semibold text-dark text-truncate me-2" title="{{ $doc->titulo }}">{{ $doc->titulo }}</span>
+                                                    <div class="d-flex gap-1">
+                                                        @if($doc->archivo_pdf)
+                                                            <a href="{{ asset('storage/' . $doc->archivo_pdf) }}" target="_blank" class="btn btn-sm btn-outline-danger px-2.5 py-0.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;">
+                                                                <i class="fas fa-file-pdf"></i> PDF
+                                                            </a>
+                                                        @endif
+                                                        @if($doc->link)
+                                                            <a href="{{ $doc->link }}" target="_blank" class="btn btn-sm btn-outline-primary px-2.5 py-0.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;">
+                                                                <i class="fas fa-external-link-alt"></i> Link
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

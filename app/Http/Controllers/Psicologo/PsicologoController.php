@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Psicologo;
 use App\Http\Controllers\Controller;
 use App\Models\CitaPsicologica;
 use App\Models\User;
+use App\Models\Aula;
+use App\Models\MaterialPsicologia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PsicologoController extends Controller
 {
@@ -24,18 +28,55 @@ class PsicologoController extends Controller
 
         $usuarios = User::query()
             ->whereIn('id', $ids)
-            ->get(['id', 'nombres', 'apellidos'])
+            ->with(['matriculas.aula'])
+            ->get()
             ->keyBy('id');
 
-        $pendientes = $citas->where('estado', 'pendiente')->values();
+        $pendientes = $citas->whereIn('estado', ['pendiente', 'citado'])->values();
 
         $resumen = [
-            'pendientes' => $citas->where('estado', 'pendiente')->count(),
+            'pendientes' => $citas->whereIn('estado', ['pendiente', 'citado'])->count(),
             'atendidas' => $citas->where('estado', 'atendida')->count(),
-            'canceladas' => $citas->where('estado', 'cancelada')->count(),
         ];
 
-        return view('psicologo.dashboard', compact('pendientes', 'usuarios', 'resumen'));
+        $atendidasPorBimestre = $citas->where('estado', 'atendida')
+            ->groupBy('bimestre')
+            ->sortBy(fn($group, $key) => $key);
+
+        $bimestreLabels = [
+            'B1' => 'Primer Bimestre (I)',
+            'B2' => 'Segundo Bimestre (II)',
+            'B3' => 'Tercer Bimestre (III)',
+            'B4' => 'Cuarto Bimestre (IV)',
+        ];
+
+        // Fetch and group classrooms for publishing materials
+        $aulasPorTurno = Aula::orderBy('grado')->orderBy('seccion')->get()->groupBy('turno');
+
+        // Fetch published materials history for this psychologist
+        $materialesPublicados = MaterialPsicologia::where('psicologo_id', Auth::id())
+            ->with('aulas')
+            ->latest()
+            ->get();
+
+        $order = [
+            'I Bimestre' => 1,
+            'II Bimestre' => 2,
+            'III Bimestre' => 3,
+            'IV Bimestre' => 4
+        ];
+        $materialesPorBimestreDoc = $materialesPublicados->groupBy('bimestre')
+            ->sortBy(fn($group, $key) => $order[$key] ?? 99);
+
+        return view('psicologo.dashboard', compact(
+            'pendientes', 
+            'usuarios', 
+            'resumen', 
+            'atendidasPorBimestre', 
+            'bimestreLabels',
+            'aulasPorTurno',
+            'materialesPorBimestreDoc'
+        ));
     }
 
     public function asignarCita(Request $request, CitaPsicologica $cita)
@@ -50,12 +91,80 @@ class PsicologoController extends Controller
         $cita->update([
             'fecha_cita' => $datos['fecha_cita'],
             'psicologo_id' => Auth::id(),
-            'estado' => 'pendiente',
+            'estado' => 'citado',
         ]);
 
         return redirect()
             ->route('psicologo.dashboard')
             ->with('success', 'Cita asignada correctamente.');
     }
-}
 
+    public function marcarAtendida(CitaPsicologica $cita)
+    {
+        $cita->update([
+            'estado' => 'atendida',
+        ]);
+
+        return redirect()
+            ->route('psicologo.dashboard')
+            ->with('success', 'Cita marcada como atendida.');
+    }
+
+    public function storeMaterial(Request $request)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'enlace' => 'nullable|string|max:255',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'fecha_limite' => 'nullable|date',
+            'bimestre' => 'required|in:I Bimestre,II Bimestre,III Bimestre,IV Bimestre',
+            'aulas' => 'required|array',
+            'aulas.*' => 'exists:aulas,id',
+        ], [
+            'titulo.required' => 'El título es obligatorio.',
+            'bimestre.required' => 'El bimestre es obligatorio.',
+            'aulas.required' => 'Debes seleccionar al menos un salón.',
+            'imagen.image' => 'El archivo debe ser una imagen válida.',
+            'imagen.max' => 'La imagen no debe superar los 2MB.',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $imagenPath = null;
+            if ($request->hasFile('imagen')) {
+                $imagenPath = $request->file('imagen')->store('psicologia', 'public');
+            }
+
+            $material = MaterialPsicologia::create([
+                'psicologo_id' => Auth::id(),
+                'titulo' => $request->input('titulo'),
+                'descripcion' => $request->input('descripcion'),
+                'enlace' => $request->input('enlace'),
+                'imagen' => $imagenPath,
+                'fecha_limite' => $request->input('fecha_limite'),
+                'bimestre' => $request->input('bimestre'),
+            ]);
+
+            $material->aulas()->sync($request->input('aulas', []));
+        });
+
+        return redirect()
+            ->route('psicologo.dashboard')
+            ->with('success', 'Material / Evaluación publicado con éxito.');
+    }
+
+    public function destroyMaterial($id)
+    {
+        $material = MaterialPsicologia::where('psicologo_id', Auth::id())->findOrFail($id);
+        
+        if ($material->imagen) {
+            Storage::disk('public')->delete($material->imagen);
+        }
+        
+        $material->delete();
+
+        return redirect()
+            ->route('psicologo.dashboard')
+            ->with('success', 'Material eliminado correctamente.');
+    }
+}

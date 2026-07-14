@@ -38,17 +38,16 @@
                    class="{{ request()->routeIs('profesor.aula-virtual.*') || request()->routeIs('aula-virtual.*') ? 'active' : '' }}">
                     <i class="fas fa-laptop-house"></i> Aula Virtual
                 </a>
-                <a href="{{ route('profesor.dashboard') }}#cursos"
-                   class="{{ request()->routeIs('profesor.clase') ? 'active' : '' }}">
-                    <i class="fas fa-book-open"></i> Mis cursos
-                </a>
-
                 <a href="{{ route('profesor.psicologia.index') }}"
                    class="{{ request()->routeIs('profesor.psicologia.*') ? 'active' : '' }}">
                     <i class="fas fa-brain"></i> Psicología
                 </a>
+                <a href="{{ route('profesor.auxiliar.index') }}"
+                   class="{{ request()->routeIs('profesor.auxiliar.*') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> Auxiliar
+                </a>
 
-                @if ($esTutor ?? false)
+                @if (auth()->user()->aulasTutoria()->exists())
                     <div class="cv-sidebar-group-title px-3 py-2 mt-2 text-uppercase small opacity-75"
                          style="font-size:.7rem; letter-spacing:1px;">
                         Tutoría

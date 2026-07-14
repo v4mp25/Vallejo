@@ -28,4 +28,14 @@ class Aula extends Model
     {
         return $this->grado . '° ' . $this->seccion;
     }
+
+    public function materialesPsicologia()
+    {
+        return $this->belongsToMany(MaterialPsicologia::class, 'aula_material_psicologia', 'aula_id', 'material_psicologia_id');
+    }
+
+    public function materialesAuxiliar()
+    {
+        return $this->belongsToMany(MaterialAuxiliar::class, 'aula_material_auxiliar', 'aula_id', 'material_auxiliar_id');
+    }
 }

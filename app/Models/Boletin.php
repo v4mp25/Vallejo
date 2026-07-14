@@ -12,5 +12,10 @@ class Boletin extends Model
         'titulo',
         'mes_anio',
         'archivo_pdf',
+        'fecha_limite',
+    ];
+
+    protected $casts = [
+        'fecha_limite' => 'date',
     ];
 }

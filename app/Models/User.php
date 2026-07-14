@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Asistencia::class, 'alumno_id');
     }
+
+    public function virtualMaterials()
+    {
+        return $this->hasMany(VirtualMaterial::class, 'user_id');
+    }
 }

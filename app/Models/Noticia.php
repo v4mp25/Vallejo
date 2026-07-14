@@ -13,9 +13,11 @@ class Noticia extends Model
         'contenido',
         'fecha',
         'imagen',
+        'fecha_limite',
     ];
 
     protected $casts = [
         'fecha' => 'date',
+        'fecha_limite' => 'date',
     ];
 }

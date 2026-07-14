@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GestionInstitucional;
 use App\Models\PersonalInstitucional;
 use App\Models\DocumentoGestion;
+use App\Models\OrganoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,8 +17,10 @@ class GestionInstitucionalController extends Controller
         $info = GestionInstitucional::first() ?? new GestionInstitucional();
         $personal = PersonalInstitucional::all();
         $documentos = DocumentoGestion::all();
+        $coneiDocs = OrganoDocumento::where('organo', 'conei')->get();
+        $apafaDocs = OrganoDocumento::where('organo', 'apafa')->get();
 
-        return view('admin.gestion-institucional.index', compact('info', 'personal', 'documentos'));
+        return view('admin.gestion-institucional.index', compact('info', 'personal', 'documentos', 'coneiDocs', 'apafaDocs'));
     }
 
     public function guardarTextosOrganigrama(Request $request)
@@ -60,7 +63,7 @@ class GestionInstitucionalController extends Controller
             'nombres'   => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'cargo'     => 'required|string|max:255',
-            'categoria' => 'required|in:directivo,docente,administrativo',
+            'categoria' => 'required|in:directivo,administrativo',
             'foto'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -80,6 +83,34 @@ class GestionInstitucionalController extends Controller
         return back()->with('success', '¡Miembro del personal institucional agregado con éxito!');
     }
 
+    public function actualizarPersonal(Request $request, $id)
+    {
+        $request->validate([
+            'nombres'   => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'cargo'     => 'required|string|max:255',
+            'categoria' => 'required|in:directivo,administrativo',
+            'foto'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $miembro = PersonalInstitucional::findOrFail($id);
+        $miembro->nombres = $request->input('nombres');
+        $miembro->apellidos = $request->input('apellidos');
+        $miembro->cargo = $request->input('cargo');
+        $miembro->categoria = $request->input('categoria');
+
+        if ($request->hasFile('foto')) {
+            if ($miembro->foto) {
+                Storage::disk('public')->delete($miembro->foto);
+            }
+            $miembro->foto = $request->file('foto')->store('personal', 'public');
+        }
+
+        $miembro->save();
+
+        return back()->with('success', '¡Miembro del personal institucional actualizado con éxito!');
+    }
+
     public function eliminarPersonal($id)
     {
         $miembro = PersonalInstitucional::findOrFail($id);
@@ -91,6 +122,48 @@ class GestionInstitucionalController extends Controller
         $miembro->delete();
 
         return back()->with('success', '¡Miembro del personal institucional eliminado!');
+    }
+
+    // CONEI & APAFA Documents
+    public function guardarOrganoDocumento(Request $request)
+    {
+        $request->validate([
+            'organo'      => 'required|in:conei,apafa',
+            'titulo'      => 'required|string|max:255',
+            'archivo_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'link'        => 'nullable|string|max:255',
+        ]);
+
+        if (!$request->hasFile('archivo_pdf') && !$request->input('link')) {
+            return back()->withErrors(['error' => 'Debes subir un archivo PDF o ingresar un enlace.']);
+        }
+
+        $pdfPath = null;
+        if ($request->hasFile('archivo_pdf')) {
+            $pdfPath = $request->file('archivo_pdf')->store('organos', 'public');
+        }
+
+        OrganoDocumento::create([
+            'organo'      => $request->input('organo'),
+            'titulo'      => $request->input('titulo'),
+            'archivo_pdf' => $pdfPath,
+            'link'        => $request->input('link'),
+        ]);
+
+        return back()->with('success', '¡Documento/enlace de participación guardado con éxito!');
+    }
+
+    public function eliminarOrganoDocumento($id)
+    {
+        $doc = OrganoDocumento::findOrFail($id);
+        
+        if ($doc->archivo_pdf) {
+            Storage::disk('public')->delete($doc->archivo_pdf);
+        }
+
+        $doc->delete();
+
+        return back()->with('success', '¡Documento/enlace eliminado correctamente!');
     }
 
     public function guardarDocumento(Request $request)

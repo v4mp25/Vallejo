@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Asignacion extends Model
 {
-    protected $fillable = ['profesor_id', 'aula_id', 'curso_id'];
+    protected $fillable = ['profesor_id', 'aula_id', 'curso_id', 'año_academico'];
 
     public function profesor()
     {

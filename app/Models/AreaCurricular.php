@@ -10,7 +10,7 @@ class AreaCurricular extends Model
 
     protected $fillable = [
         'nombre',
-        'icono',
+        'imagen',
         'descripcion',
     ];
 }

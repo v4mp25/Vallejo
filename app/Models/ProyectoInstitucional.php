@@ -12,5 +12,6 @@ class ProyectoInstitucional extends Model
         'titulo',
         'descripcion',
         'imagen',
+        'link',
     ];
 }

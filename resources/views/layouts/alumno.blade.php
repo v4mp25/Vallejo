@@ -34,6 +34,14 @@
                    class="{{ request()->routeIs('aula-virtual.*') ? 'active' : '' }}">
                     <i class="fas fa-laptop-house"></i> Aula Virtual
                 </a>
+                <a href="{{ route('alumno.psicologia.index') }}"
+                   class="{{ request()->routeIs('alumno.psicologia.*') ? 'active' : '' }}">
+                    <i class="fas fa-brain"></i> Psicología
+                </a>
+                <a href="{{ route('alumno.auxiliar.index') }}"
+                   class="{{ request()->routeIs('alumno.auxiliar.*') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> Auxiliar
+                </a>
             </nav>
 
             <div class="p-3 border-top border-light border-opacity-25">

@@ -10,11 +10,14 @@ class Comunicado extends Model
 
     protected $fillable = [
         'titulo',
+        'contenido',
         'fecha',
         'archivo_pdf',
+        'fecha_limite',
     ];
 
     protected $casts = [
         'fecha' => 'date',
+        'fecha_limite' => 'date',
     ];
 }

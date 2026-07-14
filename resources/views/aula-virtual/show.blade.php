@@ -1,4 +1,4 @@
-@extends('layouts.profesor')
+@extends(auth()->user()->rol === 'alumno' || auth()->user()->rol === 'padre' ? 'layouts.alumno' : (auth()->user()->rol === 'admin' || auth()->user()->rol === 'director' ? 'layouts.admin' : 'layouts.profesor'))
 
 @section('title', 'Detalle del recurso')
 @section('page_title', 'Detalle del recurso')

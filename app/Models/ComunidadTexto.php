@@ -13,6 +13,6 @@ class ComunidadTexto extends Model
         'padres_texto',
         'exalumnos_texto',
         'reglamento_pdf',
-        'cronograma_notas_pdf',
+        'cronograma_notes_pdf',
     ];
 }

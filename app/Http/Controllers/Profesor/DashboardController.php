@@ -12,6 +12,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Exports\NotasPlantillaExport;
+use App\Exports\NotasTutoradosExport;
+use App\Imports\NotasImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
@@ -132,7 +136,11 @@ class DashboardController extends Controller
             }
         }
 
-        return response()->json(['success' => true, 'mensaje' => 'Notas guardadas.']);
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'mensaje' => 'Notas guardadas.']);
+        }
+
+        return back()->with('success', '¡Notas guardadas correctamente!');
     }
 
     /* ──────────────────────────────────────────────
@@ -140,10 +148,19 @@ class DashboardController extends Controller
      * ────────────────────────────────────────────── */
     public function notasTutorados()
     {
-        $profesor    = Auth::user();
-        $aulaTutoria = Aula::where('tutor_id', $profesor->id)->first();
+        $profesor      = Auth::user();
+        $aulasTutoria  = Aula::where('tutor_id', $profesor->id)->get();
 
-        if (!$aulaTutoria) abort(403, 'No eres tutor de ningún salón.');
+        if ($aulasTutoria->isEmpty()) abort(403, 'No eres tutor de ningún salón.');
+
+        $selectedAulaId = request()->query('aula_id');
+        $aulaTutoria    = $selectedAulaId 
+            ? $aulasTutoria->firstWhere('id', $selectedAulaId) 
+            : $aulasTutoria->first();
+
+        if (!$aulaTutoria) {
+            $aulaTutoria = $aulasTutoria->first();
+        }
 
         $alumnos = User::where('rol', 'alumno')
             ->whereHas('matriculas', fn($q) => $q->where('aula_id', $aulaTutoria->id))
@@ -166,8 +183,53 @@ class DashboardController extends Controller
         $esTutor = true;
 
         return view('profesor.tutorados', compact(
-            'aulaTutoria', 'alumnos', 'asignaciones', 'notasOrganizadas', 'esTutor'
+            'aulaTutoria', 'alumnos', 'asignaciones', 'notasOrganizadas', 'esTutor', 'aulasTutoria'
         ));
+    }
+
+    /* ──────────────────────────────────────────────
+     *  5b. EXPORTAR NOTAS DE TUTORADOS (Excel)
+     * ────────────────────────────────────────────── */
+    public function exportarNotasTutorados()
+    {
+        $profesor     = Auth::user();
+        $aulasTutoria = Aula::where('tutor_id', $profesor->id)->get();
+
+        if ($aulasTutoria->isEmpty()) abort(403, 'No eres tutor de ningún salón.');
+
+        $selectedAulaId = request()->query('aula_id');
+        $aulaTutoria    = $selectedAulaId
+            ? $aulasTutoria->firstWhere('id', $selectedAulaId)
+            : $aulasTutoria->first();
+
+        if (!$aulaTutoria) {
+            $aulaTutoria = $aulasTutoria->first();
+        }
+
+        $alumnos = User::where('rol', 'alumno')
+            ->whereHas('matriculas', fn($q) => $q->where('aula_id', $aulaTutoria->id))
+            ->orderBy('apellidos')
+            ->get();
+
+        $asignaciones  = Asignacion::with('curso')->where('aula_id', $aulaTutoria->id)->get();
+        $alumnoIds     = $alumnos->pluck('id');
+        $asignacionIds = $asignaciones->pluck('id');
+
+        $notas = Nota::whereIn('alumno_id', $alumnoIds)
+            ->whereIn('asignacion_id', $asignacionIds)
+            ->get();
+
+        $notasOrganizadas = [];
+        foreach ($notas as $nota) {
+            $notasOrganizadas[$nota->alumno_id][$nota->asignacion_id][$nota->periodo] = $nota->calificacion;
+        }
+
+        $nombreArchivo = 'notas_tutorados_' . $aulaTutoria->grado . $aulaTutoria->seccion . '.xlsx';
+
+        return Excel::download(
+            new NotasTutoradosExport($aulaTutoria, $alumnos, $asignaciones, $notasOrganizadas),
+            $nombreArchivo
+        );
     }
 
     /* ──────────────────────────────────────────────
@@ -304,5 +366,70 @@ class DashboardController extends Controller
             'success' => true,
             'mensaje' => 'Derivación enviada a psicología.',
         ]);
+    }
+
+    /* ──────────────────────────────────────────────
+     *  10. EXPORTAR PLANTILLA DE NOTAS (Excel)
+     * ────────────────────────────────────────────── */
+    public function exportarPlantilla($asignacion_id)
+    {
+        $profesor   = Auth::user();
+        $asignacion = Asignacion::with(['curso', 'aula'])->findOrFail($asignacion_id);
+
+        if ($asignacion->profesor_id !== $profesor->id) {
+            abort(403);
+        }
+
+        $alumnos = User::where('rol', 'alumno')
+            ->whereHas('matriculas', fn($q) => $q->where('aula_id', $asignacion->aula_id))
+            ->orderBy('apellidos')
+            ->get();
+
+        $notas = Nota::where('asignacion_id', $asignacion->id)
+            ->get()
+            ->groupBy('alumno_id');
+
+        $nombreArchivo = 'plantilla_notas_' . str_replace(' ', '_', strtolower($asignacion->curso->nombre)) . '_' . $asignacion->aula->grado . $asignacion->aula->seccion . '.xlsx';
+
+        return Excel::download(new NotasPlantillaExport($asignacion, $alumnos, $notas), $nombreArchivo);
+    }
+
+    /* ──────────────────────────────────────────────
+     *  11. IMPORTAR EXCEL DE NOTAS
+     * ────────────────────────────────────────────── */
+    public function importarExcel(Request $request, $asignacion_id)
+    {
+        $profesor   = Auth::user();
+        $asignacion = Asignacion::findOrFail($asignacion_id);
+
+        if ($asignacion->profesor_id !== $profesor->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'archivo_excel' => ['required', 'file', 'mimes:xlsx,xls'],
+        ], [
+            'archivo_excel.required' => 'Debe seleccionar un archivo.',
+            'archivo_excel.file'     => 'El archivo no es válido.',
+            'archivo_excel.mimes'    => 'El archivo debe ser un formato Excel (.xlsx, .xls).',
+        ]);
+
+        $import = new NotasImport($asignacion->id, $asignacion->aula_id);
+
+        try {
+            Excel::import($import, $request->file('archivo_excel'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al procesar el archivo Excel. Asegúrese de que no se ha modificado la estructura de la plantilla.');
+        }
+
+        $errors = $import->getErrors();
+        $updatedCount = $import->getUpdatedCount();
+
+        if (count($errors) > 0) {
+            return back()->with('import_errors', $errors)
+                ->with('success', "Se procesaron las notas. Se actualizaron {$updatedCount} alumnos, pero hubo errores en algunas filas.");
+        }
+
+        return back()->with('success', "¡Excelente! Se actualizaron correctamente las notas de {$updatedCount} alumnos.");
     }
 }

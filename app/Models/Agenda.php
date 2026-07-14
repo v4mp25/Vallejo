@@ -13,10 +13,12 @@ class Agenda extends Model
         'fecha_inicio',
         'fecha_fin',
         'lugar',
+        'fecha_limite',
     ];
 
     protected $casts = [
         'fecha_inicio' => 'date',
         'fecha_fin'    => 'date',
+        'fecha_limite' => 'date',
     ];
 }

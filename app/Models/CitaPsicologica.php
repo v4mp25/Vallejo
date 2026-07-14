@@ -17,6 +17,7 @@ class CitaPsicologica extends Model
         'profesor_id',
         'psicologo_id',
         'motivo',
+        'bimestre',
         'fecha_cita',
         'estado'
     ];

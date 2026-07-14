@@ -14,7 +14,13 @@
         body { font-family: 'Roboto', sans-serif !important; background-color: #f4f6f9; color: #333; }
         .cv-navbar-wrap { position: relative; background-color: var(--cv-primary); }
         .cv-navbar-wrap .nav-link { color: #fff !important; font-weight: 500; font-size: 0.9rem; padding: 10px 12px !important; }
-        @media (min-width: 992px) { .cv-dropdown-hover:hover > .dropdown-menu { display: block; margin-top: 0; animation: fadeIn .3s ease; } }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+            .cv-navbar-wrap .nav-link { font-size: 0.78rem !important; padding: 10px 5px !important; }
+            .navbar-brand span.fw-bold { font-size: 1.05rem !important; }
+            .navbar-brand span:last-child { font-size: 0.55rem !important; }
+            .navbar-brand img { height: 40px !important; }
+        }
+        @media (min-width: 1200px) { .cv-dropdown-hover:hover > .dropdown-menu { display: block; margin-top: 0; animation: fadeIn .3s ease; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .cv-dropdown-hover .dropdown-menu { border-radius: 12px; padding: 10px 0; }
         .cv-dropdown-hover .dropdown-item { padding: 10px 20px; font-weight: 500; color: #444; transition: all 0.2s; }
@@ -44,7 +50,7 @@
     </div>
 
     <div class="cv-navbar-wrap" style="position: relative; background-color: var(--cv-primary);">
-        <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-2">
+        <nav class="navbar navbar-expand-xl navbar-dark px-4 px-lg-5 py-2">
             <a class="navbar-brand p-0 d-flex align-items-center gap-2" href="{{ url('/') }}">
                 @if(isset($config) && $config->logo_url)
                     <img id="logo-img" src="{{ asset('storage/' . $config->logo_url) }}" alt="I.E. César Vallejo" height="50">
@@ -65,7 +71,7 @@
                     
                     <div class="nav-item dropdown cv-dropdown-hover">
                         <a class="nav-link dropdown-toggle text-white" href="{{ url('/nuestra-institucion') }}" id="navbarInstitucion">
-                            Nuestra Institución
+                            Institución
                         </a>
                         <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarInstitucion">
                             <li><a class="dropdown-item" href="{{ url('/nuestra-institucion#resena') }}"><i class="fas fa-history text-warning me-2"></i>Reseña Histórica</a></li>
@@ -77,7 +83,7 @@
 
                     <div class="nav-item dropdown cv-dropdown-hover">
                         <a class="nav-link dropdown-toggle text-white" href="{{ url('/gestion-institucional') }}" id="navbarGestion">
-                            Gestión Institucional
+                            Gestión
                         </a>
                         <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarGestion">
                             <li><a class="dropdown-item" href="{{ url('/gestion-institucional#personal') }}"><i class="fas fa-users text-primary me-2"></i>3.1 Personal Institucional</a></li>
@@ -87,11 +93,55 @@
                         </ul>
                     </div>
 
-                    <a class="nav-link text-white" href="{{ url('/servicio-educativo') }}">Servicio Educativo</a>
-                    <a class="nav-link text-white" href="{{ url('/comunidad-educativa') }}">Comunidad Educativa</a>
-                    <a class="nav-link text-white fw-bold" href="{{ url('/logros-reconocimientos') }}" style="color: #ffc107 !important;">Logros y Reconocimientos</a>
-                    <a class="nav-link text-white" href="{{ url('/galeria-institucional') }}">Galería Institucional</a>
-                    <a class="nav-link text-white" href="{{ url('/noticias-comunicados') }}">Noticias y Comunicados</a>
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/servicio-educativo') }}" id="navbarServicio">
+                            Servicio
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarServicio">
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#areas') }}"><i class="fas fa-book text-primary me-2"></i>4.1 Áreas Curriculares</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#propuesta') }}"><i class="fas fa-chalkboard-teacher text-success me-2"></i>4.2 Propuesta Pedagógica</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/servicio-educativo#proyectos') }}"><i class="fas fa-rocket text-warning me-2"></i>4.3 Proyectos Bandera</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/comunidad-educativa') }}" id="navbarComunidad">
+                            Comunidad
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarComunidad">
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#estudiantes') }}"><i class="fas fa-user-graduate text-primary me-2"></i>6.1 Estudiantes</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#padres') }}"><i class="fas fa-user-friends text-success me-2"></i>6.2 Padres de Familia</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#exalumnos') }}"><i class="fas fa-user-tie text-warning me-2"></i>6.3 Exalumnos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/comunidad-educativa#aliados') }}"><i class="fas fa-handshake text-danger me-2"></i>6.4 Aliados Estratégicos</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white fw-bold" href="{{ url('/logros-reconocimientos') }}" id="navbarLogros" style="color: #ffc107 !important;">
+                            Logros
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarLogros">
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#academico') }}"><i class="fas fa-book-reader text-primary me-2"></i>7.1 Académicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#deportivo') }}"><i class="fas fa-running text-success me-2"></i>7.2 Deportivos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#artistico') }}"><i class="fas fa-palette text-warning me-2"></i>7.3 Artísticos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#cientifico') }}"><i class="fas fa-flask text-danger me-2"></i>7.4 Científicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/logros-reconocimientos#institucional') }}"><i class="fas fa-award text-secondary me-2"></i>7.5 Reconocimientos</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-item dropdown cv-dropdown-hover">
+                        <a class="nav-link dropdown-toggle text-white" href="{{ url('/galeria-institucional') }}" id="navbarGaleria">
+                            Galería
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarGaleria">
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#fotos') }}"><i class="fas fa-camera text-primary me-2"></i>8.1 Fotografías</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#videos') }}"><i class="fas fa-video text-success me-2"></i>8.2 Videos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#eventos') }}"><i class="fas fa-calendar-day text-warning me-2"></i>8.3 Eventos Cívicos</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/galeria-institucional#actividades') }}"><i class="fas fa-chalkboard text-danger me-2"></i>8.4 Actividades</a></li>
+                        </ul>
+                    </div>
+
+
 
                     <a class="nav-link btn-login ms-lg-2 bg-warning text-dark border-warning fw-bold shadow-sm" href="{{ url('/login') }}" style="font-size: 0.85rem; padding: 8px 18px !important; border-radius: 50px !important;">
                         <i class="fas fa-user me-1"></i> Login

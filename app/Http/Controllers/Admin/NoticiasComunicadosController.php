@@ -7,6 +7,7 @@ use App\Models\Noticia;
 use App\Models\Comunicado;
 use App\Models\Agenda;
 use App\Models\Boletin;
+use App\Models\ActividadProxima;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,27 +19,30 @@ class NoticiasComunicadosController extends Controller
         $comunicados = Comunicado::orderBy('fecha', 'desc')->get();
         $agenda = Agenda::orderBy('fecha_inicio', 'asc')->get();
         $boletines = Boletin::all();
+        $actividadesProximas = ActividadProxima::orderBy('fecha', 'asc')->get();
 
-        return view('admin.noticias-comunicados.index', compact('noticias', 'comunicados', 'agenda', 'boletines'));
+        return view('admin.noticias-comunicados.index', compact('noticias', 'comunicados', 'agenda', 'boletines', 'actividadesProximas'));
     }
 
     // Noticias
     public function storeNoticia(Request $request)
     {
         $request->validate([
-            'titulo'    => 'required|string|max:255',
-            'fecha'     => 'required|date',
-            'contenido' => 'required|string',
-            'imagen'    => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'titulo'       => 'required|string|max:255',
+            'fecha'        => 'required|date',
+            'contenido'    => 'required|string',
+            'imagen'       => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'fecha_limite' => 'nullable|date',
         ]);
 
         $imagePath = $request->file('imagen')->store('noticias', 'public');
 
         Noticia::create([
-            'titulo'    => $request->input('titulo'),
-            'fecha'     => $request->input('fecha'),
-            'contenido' => $request->input('contenido'),
-            'imagen'    => $imagePath,
+            'titulo'       => $request->input('titulo'),
+            'fecha'        => $request->input('fecha'),
+            'contenido'    => $request->input('contenido'),
+            'imagen'       => $imagePath,
+            'fecha_limite' => $request->input('fecha_limite'),
         ]);
 
         return back()->with('success', '¡Noticia publicada con éxito!');
@@ -59,17 +63,24 @@ class NoticiasComunicadosController extends Controller
     public function storeComunicado(Request $request)
     {
         $request->validate([
-            'titulo'      => 'required|string|max:255',
-            'fecha'       => 'required|date',
-            'archivo_pdf' => 'required|file|mimes:pdf|max:10240',
+            'titulo'       => 'required|string|max:255',
+            'fecha'        => 'required|date',
+            'contenido'    => 'nullable|string',
+            'archivo_pdf'  => 'nullable|file|mimes:pdf|max:10240',
+            'fecha_limite' => 'nullable|date',
         ]);
 
-        $pdfPath = $request->file('archivo_pdf')->store('comunicados', 'public');
+        $pdfPath = null;
+        if ($request->hasFile('archivo_pdf')) {
+            $pdfPath = $request->file('archivo_pdf')->store('comunicados', 'public');
+        }
 
         Comunicado::create([
-            'titulo'      => $request->input('titulo'),
-            'fecha'       => $request->input('fecha'),
-            'archivo_pdf' => $pdfPath,
+            'titulo'       => $request->input('titulo'),
+            'contenido'    => $request->input('contenido'),
+            'fecha'        => $request->input('fecha'),
+            'archivo_pdf'  => $pdfPath,
+            'fecha_limite' => $request->input('fecha_limite'),
         ]);
 
         return back()->with('success', '¡Comunicado publicado con éxito!');
@@ -94,9 +105,16 @@ class NoticiasComunicadosController extends Controller
             'fecha_inicio' => 'required|date',
             'fecha_fin'    => 'required|date|after_or_equal:fecha_inicio',
             'lugar'        => 'required|string|max:255',
+            'fecha_limite' => 'nullable|date',
         ]);
 
-        Agenda::create($request->only(['titulo', 'fecha_inicio', 'fecha_fin', 'lugar']));
+        Agenda::create([
+            'titulo'       => $request->input('titulo'),
+            'fecha_inicio' => $request->input('fecha_inicio'),
+            'fecha_fin'    => $request->input('fecha_fin'),
+            'lugar'        => $request->input('lugar'),
+            'fecha_limite' => $request->input('fecha_limite'),
+        ]);
 
         return back()->with('success', '¡Actividad de agenda calendarizada con éxito!');
     }
@@ -113,17 +131,19 @@ class NoticiasComunicadosController extends Controller
     public function storeBoletin(Request $request)
     {
         $request->validate([
-            'titulo'      => 'required|string|max:255',
-            'mes_anio'    => 'required|string|max:100', // Ej: Julio 2026
-            'archivo_pdf' => 'required|file|mimes:pdf|max:10240',
+            'titulo'       => 'required|string|max:255',
+            'mes_anio'     => 'required|string|max:100',
+            'archivo_pdf'  => 'required|file|mimes:pdf|max:10240',
+            'fecha_limite' => 'nullable|date',
         ]);
 
         $pdfPath = $request->file('archivo_pdf')->store('boletines', 'public');
 
         Boletin::create([
-            'titulo'      => $request->input('titulo'),
-            'mes_anio'    => $request->input('mes_anio'),
-            'archivo_pdf' => $pdfPath,
+            'titulo'       => $request->input('titulo'),
+            'mes_anio'     => $request->input('mes_anio'),
+            'archivo_pdf'  => $pdfPath,
+            'fecha_limite' => $request->input('fecha_limite'),
         ]);
 
         return back()->with('success', '¡Boletín mensual publicado con éxito!');
@@ -138,5 +158,33 @@ class NoticiasComunicadosController extends Controller
         $boletin->delete();
 
         return back()->with('success', '¡Boletín mensual eliminado!');
+    }
+
+    // Próximas Actividades (9.5)
+    public function storeActividadProxima(Request $request)
+    {
+        $request->validate([
+            'titulo'       => 'required|string|max:255',
+            'fecha'        => 'required|date',
+            'descripcion'  => 'nullable|string',
+            'fecha_limite' => 'nullable|date',
+        ]);
+
+        ActividadProxima::create([
+            'titulo'       => $request->input('titulo'),
+            'fecha'        => $request->input('fecha'),
+            'descripcion'  => $request->input('descripcion'),
+            'fecha_limite' => $request->input('fecha_limite'),
+        ]);
+
+        return back()->with('success', '¡Próxima actividad registrada con éxito!');
+    }
+
+    public function destroyActividadProxima($id)
+    {
+        $act = ActividadProxima::findOrFail($id);
+        $act->delete();
+
+        return back()->with('success', '¡Próxima actividad eliminada!');
     }
 }

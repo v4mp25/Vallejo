@@ -53,7 +53,7 @@
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <a href="{{ route('importar-alumnos') }}" class="text-decoration-none">
+            <a href="{{ route('admin.estudiantes.importar') }}" class="text-decoration-none">
                 <div class="card bg-danger text-white border-0 shadow-sm h-100 rounded-4 cv-card-hover">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">

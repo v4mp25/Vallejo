@@ -8,6 +8,20 @@
         <i class="fas fa-arrow-left me-1"></i> Volver a mi panel
     </a>
 
+    @if(isset($aulasTutoria) && $aulasTutoria->count() > 1)
+        <div class="d-flex align-items-center gap-2 mb-3 bg-white p-2 rounded-3 shadow-sm border border-light">
+            <span class="text-secondary small fw-semibold ms-2"><i class="fas fa-filter text-primary me-1"></i> Seleccionar Aula:</span>
+            <div class="d-flex gap-2">
+                @foreach($aulasTutoria as $aula)
+                    <a href="?aula_id={{ $aula->id }}" 
+                       class="btn btn-sm rounded-pill px-3 transition-all hover-lift {{ $aulaTutoria->id == $aula->id ? 'btn-primary' : 'btn-outline-primary' }}">
+                        {{ $aula->grado }}° "{{ $aula->seccion }}" Secundaria
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Encabezado del salón --}}
     <div class="cv-tutoria-banner mb-4">
         <div>
@@ -20,6 +34,11 @@
                 · {{ $alumnos->count() }} alumno{{ $alumnos->count() !== 1 ? 's' : '' }}
             </p>
         </div>
+        @if($alumnos->isNotEmpty() && $asignaciones->isNotEmpty())
+            <a href="{{ route('profesor.tutorados.notas.exportar', ['aula_id' => $aulaTutoria->id]) }}" class="btn btn-light rounded-pill px-4 fw-bold">
+                <i class="fas fa-file-excel me-2 text-success"></i> Descargar Excel
+            </a>
+        @endif
     </div>
 
     @if ($alumnos->isEmpty())
@@ -96,6 +115,13 @@
         position: sticky;
         top: 0;
         z-index: 1;
+    }
+    .hover-lift {
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 </style>
 @endpush
